@@ -1,0 +1,52 @@
+.App {
+	text-align: center;
+	margin-bottom: 3em;
+  height: 100%;
+}
+
+#header {
+	background-color: #e0e0e0;
+	text-align: center;
+  margin-bottom: 1em;
+	height: 100px;
+	font-weight: bold;
+	font-size: 3em;
+	justify-content:center;
+    align-items: center;
+    display: flex;
+    border-bottom: 1px solid;
+}
+
+.UNFUCKBLS {
+	text-align: center;
+	margin-bottom: 3em;
+}
+
+body {
+  height: 100%;
+}
+
+html {
+  height: 100%;
+}
+
+.GameOptions {
+  height: 50%;
+  background-color: blue;
+}
+
+#root {
+  height: 100%
+}
+
+.App-header {
+  height: 100%
+}
+
+#root {
+  height: 100%
+}
+
+.Lobby {
+  height: 100%
+}
