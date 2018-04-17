@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
-import Lobby from './Lobby';
+import GameSetup from './GameSetup';
 
 class Welcome extends Component {
 
@@ -24,23 +24,7 @@ class Welcome extends Component {
 
   render() {
     return (
-      /*<div id="startview">
-      	<div style={{flex: 0.2}}></div>
-      	<div id="text">
-      		<div style={{flex: 0.33}}>
-          </div>
-      		<div style={{flex: 0.33}}>
-    			  <div class="btnhandler">
-      		    <button id="startbutton" type="button" class="btn btn-primary btn-lg" onClick={this.handleChange} >Generate Goobers</button>
-            </div>
-      		</div>
-      		<div style={{flex: 0.33}}></div>
-      	</div>
-      </div>*/
-      <Lobby/>
-
-
-
+      <GameSetup/>
     );
   }
 }

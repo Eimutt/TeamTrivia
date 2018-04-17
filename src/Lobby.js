@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
+import Grid from 'react-css-grid';
 
-class Lobby extends Component {
+class GameSetup extends Component {
 
   handleChange = () => {
     const database = firebaseApp.database();
@@ -24,31 +25,12 @@ class Lobby extends Component {
   render() {
     return (
       <div className="Lobby">
-        <GameOptions/>
-        <Teams/>
+        <div class="btnhandler">
+          <button id="startbutton" type="button" class="btn btn-primary btn-lg">Create Lobby</button>
+        </div>
       </div>
     );
   }
 }
-
-
-class GameOptions extends React.Component {
-
-  render() {
-    return (
-      <div className="GameOptions">ENus</div>
-    );
-  }
-}
-
-class Teams extends React.Component {
-
-  render() {
-    return (
-      <div>Benis</div>
-    );
-  }
-}
-
 
 export default Lobby;
