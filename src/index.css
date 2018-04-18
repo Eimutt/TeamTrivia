@@ -150,3 +150,43 @@ ol {
 input:focus{
   box-shadow: 0 0 1px #2196F3;
 }
+
+.TeamSetup{
+	width: 90%;
+	background-color: beige;
+	height: 60%;
+	margin: 5%;
+}
+
+.Team {
+		list-style-type: none;
+    width: 19%;
+		margin-left: 3%;
+		margin-right: 3%;
+    background-color: #eee;
+    display: inline-block;
+		height: 400px;
+		padding: 0;
+		font-size: 2em;
+}
+
+.TeamList {
+		list-style-type: none;
+		padding: 0;
+}
+
+.AddTeam {
+		list-style-type: none;
+    width: 19%;
+		margin-left: 3%;
+		margin-right: 3%;
+    background-color: #eee;
+    display: inline-block;
+		height: 60px;
+		padding: 0;
+		font-size: 2em;
+}
+
+.TeamMember{
+	margin-bottom: 10px;
+}
