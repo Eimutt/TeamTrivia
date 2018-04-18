@@ -10,10 +10,11 @@ class Lobby extends Component {
     // We create the state to store the various statuses
     // e.g. API data loading or error
     this.state = {
-      status: 'INITIAL'
+      status: 'INITIAL',
+      numQ:0,
+      categories: []
     }
-    this.numQ = 0;
-    this.categories = [];
+
   }
 
   componentDidMount = () => {
@@ -22,9 +23,11 @@ class Lobby extends Component {
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
     lobbydata.once("value", (snapshot) => {
-      this.numQ =  snapshot.val().numberOfQuestions;
-      this.categories = snapshot.val().categories;
-      console.log(this.categories);
+      this.setState({
+        numQ : snapshot.val().numberOfQuestions,
+        categories : snapshot.val().categories
+      })
+      console.log(this.state.categories);
     })
   }
 
@@ -53,10 +56,10 @@ class Lobby extends Component {
         <div class="btnhandler">
           <button id="startbutton" type="button" class="btn btn-primary btn-lg">Create Lobby</button>
         </div>
-        <div>{this.lobbyID}</div>
-        <div>{this.numQ}</div>
+        <div>{this.state.lobbyID}</div>
+        <div>{this.state.numQ}</div>
         <div>
-          {this.categories.map((category) =>
+          {this.state.categories.map((category) =>
             <div>{category.categoryname}</div>
           )}
         </div>
