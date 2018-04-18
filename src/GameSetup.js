@@ -38,12 +38,13 @@ class GameSetup extends React.Component {
     })
   }
 
-  addCategory = (categoryid) => {
+  addCategory = (categoryid, categoryname) => {
+    var category = {categoryid, categoryname};
     if(this.state.categories.includes(categoryid)){
       var index = this.state.categories.indexOf(categoryid);
       this.state.categories.splice(index,1);
     } else {
-      this.state.categories.push(categoryid);
+      this.state.categories.push(category);
     }
     console.log(this.state.categories);
   }
@@ -58,7 +59,7 @@ class GameSetup extends React.Component {
       toPrintLink = (
         <div>
           <div>Here is your game link, give it to your friends and then click on it</div>
-          <Link to = {"/" + this.state.lobbyID}>/{this.state.lobbyID}</Link>
+          <Link to = {"/lobby/" + this.state.lobbyID}>/{this.state.lobbyID}</Link>
         </div>
       )
     return (
@@ -81,8 +82,8 @@ class GameSetup extends React.Component {
 }
 
 class Categories extends React.Component {
-  handleClick(categoryid) {
-    this.props.callback(categoryid);
+  handleClick(categoryid, categoryname) {
+    this.props.callback(categoryid, categoryname);
   }
 
   render() {
@@ -96,28 +97,28 @@ class Categories extends React.Component {
             <div className= "griditem">
               <div className="categoryname">General Knowledge</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(9)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(9, "General Knowledge")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Film</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(11)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(11, "Film")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Music</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(12)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(12, "Music")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Television</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(14)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(14, "Televisioni")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
@@ -126,28 +127,28 @@ class Categories extends React.Component {
             <div className= "griditem">
               <div className="categoryname">Video Games</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(15)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(15, "VideoGames")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Books</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(10)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(10, "Books")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Anime and Manga</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(31)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(31, "Anime and Manga")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Science and Nature</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(17)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(17, "Science and Nature")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
@@ -156,28 +157,28 @@ class Categories extends React.Component {
             <div className= "griditem">
               <div className="categoryname">Computers</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(18)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(18, "Computers")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Mathematics</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(19)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(19, "Mathematics")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Mythology</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(20)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(20, "Mythology")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Geography</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(22)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(22, "Geography")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
@@ -186,28 +187,28 @@ class Categories extends React.Component {
             <div className= "griditem">
               <div className="categoryname">{"History"}</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(23)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(23, "History")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Politics</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(24)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(24, "Politics")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Animals</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(27)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(27, "Animals")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
             <div className= "griditem">
               <div className="categoryname">Celebrities</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(26)}></input>
+                <input type="checkbox" onClick={() => this.handleClick(26, "Celebrities")}></input>
                 <span class="slider round"></span>
               </label>
             </div>

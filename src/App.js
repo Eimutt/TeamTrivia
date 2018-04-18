@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Welcome from './Welcome';
+import Lobby from './Lobby';
 import firebaseApp from "./firebase";
 import index from "./index.css";
 
@@ -43,6 +44,7 @@ class App extends Component {
           <div id="header">{this.state.title}</div>
 
           <Route exact path="/" component={Welcome}/>
+          <Route path="/lobby/" component={Lobby}/>
 
         </header>
       </div>

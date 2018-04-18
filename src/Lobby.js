@@ -3,7 +3,32 @@ import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import Grid from 'react-css-grid';
 
-class GameSetup extends Component {
+class Lobby extends Component {
+  constructor(props) {
+    super(props);
+    //this.props.model.addObserver(this);
+    // We create the state to store the various statuses
+    // e.g. API data loading or error
+    this.state = {
+      status: 'INITIAL'
+    }
+    this.numQ = 0;
+    this.categories = [];
+  }
+
+  componentDidMount = () => {
+    var pathArray = window.location.pathname.split( '/' );
+    this.lobbyID = pathArray[2];
+    const database = firebaseApp.database();
+    const lobbydata = database.ref("Lobbies/" + pathArray[2]);
+    lobbydata.once("value", (snapshot) => {
+      this.numQ =  snapshot.val().numberOfQuestions;
+      this.categories = snapshot.val().categories;
+      console.log(this.categories);
+    })
+  }
+
+
 
   handleChange = () => {
     const database = firebaseApp.database();
@@ -28,9 +53,22 @@ class GameSetup extends Component {
         <div class="btnhandler">
           <button id="startbutton" type="button" class="btn btn-primary btn-lg">Create Lobby</button>
         </div>
+        <div>{this.lobbyID}</div>
+        <div>{this.numQ}</div>
+        <div>
+          {this.categories.map((category) =>
+            <div>{category.categoryname}</div>
+          )}
+        </div>
       </div>
     );
   }
 }
+
+class TeamSetup{}
+
+
+
+
 
 export default Lobby;
