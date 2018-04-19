@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
+import GridItem from "./GridItem";
 import Grid from 'react-css-grid';
 
 class GameSetup extends React.Component {
@@ -9,7 +10,7 @@ class GameSetup extends React.Component {
     // we put on state the properties we want to use and modify in the component
     this.state = {
       numberOfQuestions: 10,
-      categories: [],
+      categories: [{"categoryid":15,"categoryname":"Video Games"},{"categoryid":10,"categoryname":"Books"},{"categoryid":31,"categoryname":"Anime and Manga"},{"categoryid":17,"categoryname":"Science and Nature"},{"categoryid":12,"categoryname":"Music"},{"categoryid":11,"categoryname":"Film"},{"categoryid":9,"categoryname":"General Knowledge"},{"categoryid":14,"categoryname":"Television"},{"categoryid":22,"categoryname":"Geography"},{"categoryid":20,"categoryname":"Mythology"},{"categoryid":19,"categoryname":"Mathematics"},{"categoryid":18,"categoryname":"Computers"},{"categoryid":23,"categoryname":"History"},{"categoryid":24,"categoryname":"Politics"},{"categoryid":27,"categoryname":"Animals"},{"categoryid":26,"categoryname":"Celebrities"}],
       lobbyID: ""
     }
   }
@@ -39,14 +40,23 @@ class GameSetup extends React.Component {
   }
 
   addCategory = (categoryid, categoryname) => {
+    var currentcategories = this.state.categories;
     var category = {categoryid, categoryname};
-    if(this.state.categories.includes(categoryid)){
-      var index = this.state.categories.indexOf(categoryid);
-      this.state.categories.splice(index,1);
-    } else {
-      this.state.categories.push(category);
-    }
-    console.log(this.state.categories);
+    var found = false;
+    for (var i = 0; i < currentcategories.length; i++) {
+        if (currentcategories[i].categoryid == categoryid) {
+          currentcategories.splice(i,1);
+          found = true;
+          break;
+        }
+      }
+      if (!found)
+        currentcategories.push(category);
+
+    this.setState({
+      categories: currentcategories,
+    })
+    console.log(JSON.stringify(this.state.categories));
   }
 
   componentDidMount() {
@@ -57,11 +67,26 @@ class GameSetup extends React.Component {
     var toPrintLink = "";
     if(this.state.lobbyID !== "")
       toPrintLink = (
-        <div>
+        <div className="gameLink">
           <div>Here is your game link, give it to your friends and then click on it</div>
-          <Link to = {"/lobby/" + this.state.lobbyID}>/{this.state.lobbyID}</Link>
+          <Link to = {"/lobby/" + this.state.lobbyID}>{window.location + "lobby/" + this.state.lobbyID}</Link>
         </div>
       )
+    var confirmButton = "";
+    console.log(this.state.categories.length);
+    if (this.state.categories.length == 0) {
+      confirmButton = (
+        <div class="btnhandler">
+          <button id="startbutton" disabled type="button" class="btn btn-primary btn-lg" onClick={() => this.handleChange()}>Create Lobby</button>
+        </div>
+      )
+    } else {
+      confirmButton = (
+        <div class="btnhandler">
+          <button id="startbutton"  type="button" class="btn btn-primary btn-lg" onClick={() => this.handleChange()}>Create Lobby</button>
+        </div>
+      )
+    }
     return (
       <div className="Lobby">
         <div className="GameOptions">
@@ -72,9 +97,7 @@ class GameSetup extends React.Component {
           </div>
           <Categories callback={this.addCategory}/>
         </div>
-        <div class="btnhandler">
-          <button id="startbutton" type="button" class="btn btn-primary btn-lg" onClick={() => this.handleChange()}>Create Lobby</button>
-        </div>
+        {confirmButton}
         {toPrintLink}
       </div>
     );
@@ -82,6 +105,15 @@ class GameSetup extends React.Component {
 }
 
 class Categories extends React.Component {
+  constructor(props) {
+    super(props);
+    console.log(props);
+    //this.props.model.addObserver(this);
+    // We create the state to store the various statuses
+    // e.g. API data loading or error
+    //  <GridItem categoryID={9} categoryName={"General Knowledge"} callback1={this.handleClick}/>
+  }
+
   handleClick(categoryid, categoryname) {
     this.props.callback(categoryid, categoryname);
   }
@@ -118,7 +150,7 @@ class Categories extends React.Component {
             <div className= "griditem">
               <div className="categoryname">Television</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(14, "Televisioni")}></input>
+                <input type="checkbox" onClick={() => this.handleClick(14, "Television")}></input>
                 <span class="slider round"></span>
               </label>
             </div>
@@ -127,7 +159,7 @@ class Categories extends React.Component {
             <div className= "griditem">
               <div className="categoryname">Video Games</div>
               <label class="switch">
-                <input type="checkbox" onClick={() => this.handleClick(15, "VideoGames")}></input>
+                <input type="checkbox" onClick={() => this.handleClick(15, "Video Games")}></input>
                 <span class="slider round"></span>
               </label>
             </div>

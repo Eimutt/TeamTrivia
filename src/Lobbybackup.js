@@ -77,7 +77,7 @@ class Lobby extends Component {
           )}
         </div>
 
-        <TeamSetup status={this.state}/>
+        <TeamSetup lobbyId={this.state.lobbyId}/>
       </div>
     );
   }
@@ -88,7 +88,7 @@ class TeamSetup extends Component{
     super(props);
     // we put on state the properties we want to use and modify in the component
     this.state = {
-      numTeams: 4,
+      numTeams: 2,
       categories: [],
       lobbyID: ""
     }
@@ -166,9 +166,25 @@ class TeamSetup extends Component{
                 </div>
               </div>
 
-      teams = <div className="TeamSetup">
-                <Team className="Team" teamid="1"/>
-                <Team className="Team" teamid="2"/>
+      teams = <div>
+                <div className="Team">
+                  <ul className="TeamList">
+                  <li className="TeamMember">
+                    <button type="button" class="btn btn-primary btn-sm" onClick={() => this.joinTeam("1")}>
+                      Add Team
+                    </button>
+                  </li>
+                    <li className="TeamMember">Second item</li>
+                    <li className="TeamMember">Third item</li>
+                  </ul>
+                </div>
+                <div className="Team">
+                  <ul className="TeamList">
+                    <li className="TeamMember">Hi again</li>
+                    <li className="TeamMember">Second item</li>
+                    <li className="TeamMember">Third item</li>
+                  </ul>
+                </div>
                 {team3}
                 {team4}
               </div>
@@ -176,6 +192,14 @@ class TeamSetup extends Component{
 
         break;
       case 3:
+      team3 = <div className="AddTeam">
+                <div class="newTeambutton">
+                  <button type="button" class="btn btn-primary btn-sm" onClick={this.addTeam}>
+                    Add Team
+                  </button>
+                </div>
+              </div>
+
       team4 = <div className="AddTeam">
                 <div class="newTeambutton">
                   <button type="button" class="btn btn-primary btn-sm" onClick={this.addTeam}>
@@ -184,10 +208,22 @@ class TeamSetup extends Component{
                 </div>
               </div>
 
-      teams = <div className="TeamSetup">
-                <Team teamid="1"/>
-                <Team teamid="2"/>
-                <Team teamid="3"/>
+      teams = <div>
+                <ul className="Team">
+                  <li className="TeamMember">Hi again</li>
+                  <li className="TeamMember">Second item</li>
+                  <li className="TeamMember">Third item</li>
+                </ul>
+                <ul className="Team">
+                  <li className="TeamMember">Hi again</li>
+                  <li className="TeamMember">Second item</li>
+                  <li className="TeamMember">Third item</li>
+                </ul>
+                <ul className="Team">
+                  <li className="TeamMember">Hi again</li>
+                  <li className="TeamMember">Second item</li>
+                  <li className="TeamMember">Third item</li>
+                </ul>
                 {team4}
               </div>
 
@@ -195,11 +231,27 @@ class TeamSetup extends Component{
 
         break;
         case 4:
-        teams = <div className="TeamSetup">
-                  <Team teamid="1"/>
-                  <Team teamid="2"/>
-                  <Team teamid="3"/>
-                  <Team teamid="4"/>
+        teams = <div>
+                  <ul className="Team">
+                    <li className="TeamMember">Hi again</li>
+                    <li className="TeamMember">Second item</li>
+                    <li className="TeamMember">Third item</li>
+                  </ul>
+                  <ul className="Team">
+                    <li className="TeamMember">Hi again</li>
+                    <li className="TeamMember">Second item</li>
+                    <li className="TeamMember">Third item</li>
+                  </ul>
+                  <ul className="Team">
+                    <li className="TeamMember">Hi again</li>
+                    <li className="TeamMember">Second item</li>
+                    <li className="TeamMember">Third item</li>
+                  </ul>
+                  <ul className="Team">
+                      <li className="TeamMember">Hi again</li>
+                      <li className="TeamMember">Second item</li>
+                      <li className="TeamMember">Third item</li>
+                  </ul>
                 </div>
         break;
       default:
@@ -211,50 +263,13 @@ class TeamSetup extends Component{
 
 
     return (
-      <div>
+      <div className="TeamSetup">
         Hello
         {teams}
       </div>
     );
   }
 
-}
-
-
-class Team extends Component{
-  constructor(props) {
-    super(props);
-    // we put on state the properties we want to use and modify in the component
-    this.state = {
-      members: [],
-      lobbyID: ""
-    }
-    this.Id = this.props.status.teamid;
-  }
-
-  /*
-  componentDidMount = () => {
-    var pathArray = window.location.pathname.split( '/' );
-    const database = firebaseApp.database();
-    const lobbydata = database.ref("Lobbies/" + pathArray[2] + "/Team" + this.Id);
-    lobbydata.on("value", (snapshot) => {
-      this.setState({
-        members : snapshot.val().memebers,
-        numQ : snapshot.val().numberOfQuestions,
-        categories : snapshot.val().categories
-      })
-    })
-  } */
-
-  render() {
-    return (
-      <div>
-        <ul className="Team">
-          Hello
-        </ul>
-      </div>
-    )
-  }
 }
 
 

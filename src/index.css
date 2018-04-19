@@ -67,44 +67,18 @@ html {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
+  background-color: #2196F3;
   -webkit-transition: .4s;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+  background-color: #ccc;
 }
 
 /* Rounded sliders */
 .slider.round {
   border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
 }
 
 ol {
@@ -154,7 +128,7 @@ input:focus{
 .TeamSetup{
 	width: 90%;
 	background-color: beige;
-	height: 60%;
+	height: 500px;
 	margin: 5%;
 }
 
@@ -168,6 +142,8 @@ input:focus{
 		height: 400px;
 		padding: 0;
 		font-size: 2em;
+		margin-top: 50px;
+		vertical-align: middle;
 }
 
 .TeamList {
@@ -188,5 +164,26 @@ input:focus{
 }
 
 .TeamMember{
+	margin-bottom: 10px;
+}
+
+.Lobby{
+	margin-top: 20px;
+}
+
+.LobbyGreet{
+	font-size: 2em;
+}
+
+#lobbyCatGrid{
+	margin-top: 10px;
+}
+
+.gameLink{
+	margin-top: 10px;
+}
+
+.NameInput{
+	margin-top: 10px;
 	margin-bottom: 10px;
 }

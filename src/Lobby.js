@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import Grid from 'react-css-grid';
+import Team from "./Team";
 
 class Lobby extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class Lobby extends Component {
         categories : snapshot.val().categories
       })
     })
-
+    console.log(this);
 
   }
 
@@ -40,16 +41,18 @@ class Lobby extends Component {
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
 
     lobbydata.update({ numberOfQuestions: this.state.numQ});
-
   }
+  <div class="btnhandler">
+    <button id="startbutton" type="button" class="btn btn-primary btn-lg" onClick={this.addQuestion}>Addbenis</button>
+  </div>
   */
 
 
 
-  handleChange = () => {
+  /*handleChange = () => {
     const database = firebaseApp.database();
     const team = database.ref("Lobby").child("Team");
-    const members = team.child("member")
+    const members = team.child("member");
     members.push({
       id: 1,
       name: "Emil",
@@ -60,24 +63,20 @@ class Lobby extends Component {
       name: "Isak",
       points: 100
     });
-  }
-
+  }*/
 
   render() {
     return (
       <div className="Lobby">
-        <div class="btnhandler">
-          <button id="startbutton" type="button" class="btn btn-primary btn-lg" onClick={this.addQuestion}>Addbenis</button>
-        </div>
-        <div>{this.state.lobbyID}</div>
-        <div>{this.state.numQ}</div>
-        <div>
+        <div className="LobbyGreet">{"Hello " + this.props.displayname}</div>
+        <div>{"Number of Questions: " + this.state.numQ}</div>
+        <div>{"Categories chosen by host:"}</div>
+        <Grid id="lobbyCatGrid" width={0} gap={0}>
           {this.state.categories.map((category) =>
             <div>{category.categoryname}</div>
           )}
-        </div>
-
-        <TeamSetup lobbyId={this.state.lobbyId}/>
+        </Grid>
+        <TeamSetup status={this.state}/>
       </div>
     );
   }
@@ -92,6 +91,8 @@ class TeamSetup extends Component{
       categories: [],
       lobbyID: ""
     }
+    const database = firebaseApp.database();
+    this.database = database.ref("Lobbies/" + this.props.status.lobbyId);
   }
 
   addTeam = () => {
@@ -103,18 +104,13 @@ class TeamSetup extends Component{
 
   joinTeam = (e) => {
     const database = firebaseApp.database();
-    console.log("Lobbies/" + this.props.lobbyId);
-    const team = database.ref("Lobbies/" + this.props.lobbyId);
+    console.log("Lobbies/" + this.props.status.lobbyId);
+    const team = database.ref("Lobbies/" + this.props.status.lobbyId);
     const members = team.child("Team" + e)
+    var user = firebaseApp.auth().currentUser;
     members.push({
-      id: 1,
-      name: "Emil",
-      points: 5
-    });
-    members.push({
-      id: 2,
-      name: "Isak",
-      points: 100
+      id: user.uid,
+      name: user.displayName,
     });
   }
 
@@ -122,155 +118,53 @@ class TeamSetup extends Component{
 
 
 
-  render() {
+    render() {
 
-    var teams;
-    var teams12 = <div>
-              <ul className="Team">
-                <li className="TeamMember">
-                  <button type="button" class="btn btn-primary btn-sm" onClick={this.joinTeam}>
-                    Add Team
-                  </button>
-                </li>
-                <li className="TeamMember">Second item</li>
-                <li className="TeamMember">Third item</li>
-              </ul>
-              <ul className="Team">
-                <li className="TeamMember">Hi again</li>
-                <li className="TeamMember">Second item</li>
-                <li className="TeamMember">Third item</li>
-              </ul>
-            </div>
-    var team3 = <div></div>
-    var team4 = <div></div>
-    console.log(this.state.numTeams);
-    switch (this.state.numTeams) {
-      case 2:
-
-      var
-
-
-      team4 = <div className="AddTeam">
-                <div class="newTeambutton">
-                  <button type="button" class="btn btn-primary btn-sm" onClick={() => this.addTeam("1")} >
-                    Add Team
-                  </button>
+      var teams;
+      console.log(this.state.numTeams);
+      switch (this.state.numTeams) {
+        case 2:
+        teams = <div className="TeamSetup">
+                  <Team teamid="1" active="yes"/>
+                  <Team teamid="2" active="yes"/>
+                  <Team teamid="3" active="no"/>
+                  <Team teamid="4" active="no"/>
                 </div>
-              </div>
+          break;
+        case 3:
 
-      team3 = <div className="AddTeam">
-                <div class="newTeambutton">
-                  <button type="button" class="btn btn-primary btn-sm" onClick={this.addTeam}>
-                    Add Team
-                  </button>
+        teams = <div className="TeamSetup">
+                  <Team teamid="1" active="yes"/>
+                  <Team teamid="2" active="yes"/>
+                  <Team teamid="3" active="yes"/>
+                  <Team teamid="4" active="no"/>
                 </div>
-              </div>
 
-      teams = <div>
-                <div className="Team">
-                  <ul className="TeamList">
-                  <li className="TeamMember">
-                    <button type="button" class="btn btn-primary btn-sm" onClick={() => this.joinTeam("1")}>
-                      Add Team
-                    </button>
-                  </li>
-                    <li className="TeamMember">Second item</li>
-                    <li className="TeamMember">Third item</li>
-                  </ul>
-                </div>
-                <div className="Team">
-                  <ul className="TeamList">
-                    <li className="TeamMember">Hi again</li>
-                    <li className="TeamMember">Second item</li>
-                    <li className="TeamMember">Third item</li>
-                  </ul>
-                </div>
-                {team3}
-                {team4}
-              </div>
-
-
-        break;
-      case 3:
-      team3 = <div className="AddTeam">
-                <div class="newTeambutton">
-                  <button type="button" class="btn btn-primary btn-sm" onClick={this.addTeam}>
-                    Add Team
-                  </button>
-                </div>
-              </div>
-
-      team4 = <div className="AddTeam">
-                <div class="newTeambutton">
-                  <button type="button" class="btn btn-primary btn-sm" onClick={this.addTeam}>
-                    Add Team
-                  </button>
-                </div>
-              </div>
-
-      teams = <div>
-                <ul className="Team">
-                  <li className="TeamMember">Hi again</li>
-                  <li className="TeamMember">Second item</li>
-                  <li className="TeamMember">Third item</li>
-                </ul>
-                <ul className="Team">
-                  <li className="TeamMember">Hi again</li>
-                  <li className="TeamMember">Second item</li>
-                  <li className="TeamMember">Third item</li>
-                </ul>
-                <ul className="Team">
-                  <li className="TeamMember">Hi again</li>
-                  <li className="TeamMember">Second item</li>
-                  <li className="TeamMember">Third item</li>
-                </ul>
-                {team4}
-              </div>
+          break;
+          case 4:
+          teams = <div className="TeamSetup">
+                    <Team teamid="1" active="yes"/>
+                    <Team teamid="2" active="yes"/>
+                    <Team teamid="3" active="yes"/>
+                    <Team teamid="4" active="yes"/>
+                  </div>
+          break;
+        default:
+          teams = <b>Failed to load data, please try again</b>
+          break;
+      }
 
 
 
-        break;
-        case 4:
-        teams = <div>
-                  <ul className="Team">
-                    <li className="TeamMember">Hi again</li>
-                    <li className="TeamMember">Second item</li>
-                    <li className="TeamMember">Third item</li>
-                  </ul>
-                  <ul className="Team">
-                    <li className="TeamMember">Hi again</li>
-                    <li className="TeamMember">Second item</li>
-                    <li className="TeamMember">Third item</li>
-                  </ul>
-                  <ul className="Team">
-                    <li className="TeamMember">Hi again</li>
-                    <li className="TeamMember">Second item</li>
-                    <li className="TeamMember">Third item</li>
-                  </ul>
-                  <ul className="Team">
-                      <li className="TeamMember">Hi again</li>
-                      <li className="TeamMember">Second item</li>
-                      <li className="TeamMember">Third item</li>
-                  </ul>
-                </div>
-        break;
-      default:
-        teams12 = <b>Failed to load data, please try again</b>
-        break;
+
+      return (
+        <div >
+          {teams}
+        </div>
+      );
     }
 
-
-
-
-    return (
-      <div className="TeamSetup">
-        Hello
-        {teams}
-      </div>
-    );
   }
-
-}
 
 
 
