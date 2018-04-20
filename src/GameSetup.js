@@ -26,10 +26,16 @@ class GameSetup extends React.Component {
     const Lobbies = database.ref("Lobbies");
     var newLobID = Lobbies.push().getKey();
     this.onLobbyIDChange(newLobID);
-    console.log(newLobID);
+    //console.log(newLobID);
+    var user = firebaseApp.auth().currentUser;
     Lobbies.child(newLobID).set({
+      host:({
+        hostId: user.uid,
+        hostName: user.displayName
+      }),
       numberOfQuestions: this.state.numberOfQuestions,
-      categories: this.state.categories
+      categories: this.state.categories,
+      status: "INITIAL"
     });
   }
 

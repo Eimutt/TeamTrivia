@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import App from './App';
-import { BrowserRouter } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom'
 
 
 ReactDOM.render((
-    <BrowserRouter>
+    <Router>
         <App />
-    </BrowserRouter>
+    </Router>
 ), document.getElementById('root'));

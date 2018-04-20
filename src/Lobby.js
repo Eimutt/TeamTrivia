@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import Grid from 'react-css-grid';
 import Team from "./Team";
+import GameState from "./GameState";
 
 class Lobby extends Component {
   constructor(props) {
@@ -14,24 +15,30 @@ class Lobby extends Component {
       status: 'INITIAL',
       numQ:0,
       categories: [],
-      lobbyId: ""
+      lobbyId: "",
+      hostId: "",
+      hostName: ""
     }
-
   }
 
+
   componentDidMount = () => {
-    var pathArray = window.location.pathname.split( '/' );
+    var pathArray = window.location.hash.split( '/' );
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
+    console.log(pathArray[2]);
     lobbydata.on("value", (snapshot) => {
       this.setState({
         lobbyId : pathArray[2],
         numQ : snapshot.val().numberOfQuestions,
-        categories : snapshot.val().categories
+        categories : snapshot.val().categories,
+        hostId : snapshot.val().host.hostId,
+        hostName: snapshot.val().host.hostName,
+        status: snapshot.val().status
       })
     })
+    console.log(this.state.hostId);
     console.log(this);
-
   }
 
   /*
@@ -47,7 +54,13 @@ class Lobby extends Component {
   </div>
   */
 
-
+  makethegame = () => {
+    const database = firebaseApp.database();
+    const lobby = database.ref("Lobbies/" + this.state.lobbyId);
+    lobby.update({
+      status: "InProgress"
+    });
+  }
 
   /*handleChange = () => {
     const database = firebaseApp.database();
@@ -66,17 +79,63 @@ class Lobby extends Component {
   }*/
 
   render() {
+    var lobbyView;
+
+
+    switch(this.state.status){
+      case 'INITIAL':
+      var beginButton = (
+        <div>
+          <button disabled id="startbutton" type="button" class="btn btn-primary btn-lg">Start Game</button>
+        </div>
+      );
+      var user = firebaseApp.auth().currentUser;
+      console.log(user.uid);
+      console.log(this.state.hostId);
+      const database = firebaseApp.database();
+      const lobby = database.ref("Lobbies/" + this.state.lobbyId);
+      var teamexists = false;
+      lobby.on("value", (snapshot) => {
+        if(snapshot.numChildren() > 3)
+          teamexists = true;
+      })
+      console.log(teamexists);
+      if(this.state.hostId == user.uid && teamexists){
+        beginButton = (
+          <div class="btnhandler">
+            <button id="startbutton" type="button" class="btn btn-primary btn-lg" onClick={() => this.makethegame()}>Start Game</button>
+          </div>
+        );
+      }
+        lobbyView = (
+          <div className="Lobby">
+            <div className="LobbyGreet">{"Hello " + this.props.displayname}</div>
+            <div>{"Number of Questions: " + this.state.numQ}</div>
+            <div>{"Categories chosen by host " + this.state.hostName + ":"}</div>
+            <Grid id="lobbyCatGrid" width={0} gap={0}>
+              {this.state.categories.map((category) =>
+                <div>{category.categoryname}</div>
+              )}
+            </Grid>
+            <TeamSetup status={this.state}/>
+            {beginButton}
+          </div>
+        );
+        break;
+      case 'InProgress':
+        console.log("XD ITS NOT A WORK");
+        lobbyView = (
+          <div>
+            <GameState/>
+          </div>
+        )
+        break;
+    }
+
+
     return (
-      <div className="Lobby">
-        <div className="LobbyGreet">{"Hello " + this.props.displayname}</div>
-        <div>{"Number of Questions: " + this.state.numQ}</div>
-        <div>{"Categories chosen by host:"}</div>
-        <Grid id="lobbyCatGrid" width={0} gap={0}>
-          {this.state.categories.map((category) =>
-            <div>{category.categoryname}</div>
-          )}
-        </Grid>
-        <TeamSetup status={this.state}/>
+      <div>
+        {lobbyView}
       </div>
     );
   }
@@ -106,7 +165,7 @@ class TeamSetup extends Component{
     const database = firebaseApp.database();
     console.log("Lobbies/" + this.props.status.lobbyId);
     const team = database.ref("Lobbies/" + this.props.status.lobbyId);
-    const members = team.child("Team" + e)
+    const members = team.child("Team" + e);
     var user = firebaseApp.auth().currentUser;
     members.push({
       id: user.uid,
@@ -120,33 +179,39 @@ class TeamSetup extends Component{
 
     render() {
 
+
+
+
+
+
+
       var teams;
       console.log(this.state.numTeams);
       switch (this.state.numTeams) {
         case 2:
         teams = <div className="TeamSetup">
-                  <Team teamid="1" active="yes"/>
-                  <Team teamid="2" active="yes"/>
-                  <Team teamid="3" active="no"/>
-                  <Team teamid="4" active="no"/>
+                  <Team teamid="1" status="active"/>
+                  <Team teamid="2" status="active"/>
+                  <Team teamid="3" status="inactive"/>
+                  <Team teamid="4" status="inactive"/>
                 </div>
           break;
         case 3:
 
         teams = <div className="TeamSetup">
-                  <Team teamid="1" active="yes"/>
-                  <Team teamid="2" active="yes"/>
-                  <Team teamid="3" active="yes"/>
-                  <Team teamid="4" active="no"/>
+                  <Team teamid="1" status="active"/>
+                  <Team teamid="2" status="active"/>
+                  <Team teamid="3" status="active"/>
+                  <Team teamid="4" status="inactive"/>
                 </div>
 
           break;
           case 4:
           teams = <div className="TeamSetup">
-                    <Team teamid="1" active="yes"/>
-                    <Team teamid="2" active="yes"/>
-                    <Team teamid="3" active="yes"/>
-                    <Team teamid="4" active="yes"/>
+                    <Team teamid="1" status="active"/>
+                    <Team teamid="2" status="active"/>
+                    <Team teamid="3" status="active"/>
+                    <Team teamid="4" status="active"/>
                   </div>
           break;
         default:

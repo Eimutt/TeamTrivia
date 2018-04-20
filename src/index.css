@@ -151,6 +151,11 @@ input:focus{
 		padding: 0;
 }
 
+.TeamName {
+	border: solid black 1px;
+	font-size: 1.31415em;
+}
+
 .AddTeam {
 		list-style-type: none;
     width: 19%;

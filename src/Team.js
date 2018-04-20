@@ -10,30 +10,50 @@ class Team extends Component{
     this.state = {
       members: [],
       lobbyID: "",
-      status: "inactive"
+      //status: this.props.status
     }
     this.Id = this.props.teamid;
   }
 
   joinTeam = () => {
     const database = firebaseApp.database();
-    const team = database.ref("Lobbies/" + this.state.lobbyID);
-    const members = team.child("Team" + this.Id + "/members");
+    const lobby = database.ref("Lobbies/" + this.state.lobbyID);
+    const members = lobby.child("Team" + this.Id + "/members");
     var user = firebaseApp.auth().currentUser;
-    console.log(members.path);
+    if (user.photoURL != this.Id) {
+      const prevTeam = lobby.child("Team" + user.photoURL + "/members");
+      prevTeam.once("value", (snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+          Object.keys(snapshot.val()).forEach(function(key) {
+              if (snapshot.val()[key].id == user.uid){
+                prevTeam.child(key).remove();
+              }
+          });
+        }
+      })
+    }
+
+    user.updateProfile({
+      photoURL: this.Id, //we couldn't use a fitting field in the user so we chose to put current team in photoURL
+    });
+    //console.log(members.path);
     members.push({
       id: user.uid,
       name: user.displayName,
     });
-    console.log(this.state.members);
+    //console.log(this.state.members);
   }
 
   addTeam = () => {
-    this.setState({
+    /*this.setState({
       status: "active"
-    })
+    })*/
     const database = firebaseApp.database();
     const team = database.ref("Lobbies/" + this.state.lobbyID + "/Team" + this.Id);
+    /*team.set({
+      status: "active"
+    })*/
     team.on("value", (snapshot) => {
       if (snapshot.child("members").exists())
         this.setState({
@@ -44,50 +64,52 @@ class Team extends Component{
   }
 
   componentDidMount = () => {
-    var pathArray = window.location.pathname.split( '/' );
+    var pathArray = window.location.hash.split( '/' );
     this.state.lobbyID = pathArray[2];
-    if (this.props.active == "yes" || this.state.statue == "active") {
-      this.state.status = "active";
-      console.log(this.state.lobbyID);
-      const database = firebaseApp.database();
-      const team = database.ref("Lobbies/" + this.state.lobbyID + "/Team" + this.Id);
-      team.on("value", (snapshot) => {
-        if (snapshot.child("members").exists())
-          this.setState({
-            members : snapshot.val().members,
-          })
-      })
-    }
-    else
-      this.state.status = "inactive";
+    console.log("benisu");
+    console.log(this.state.lobbyID);
+    const database = firebaseApp.database();
+    const team = database.ref("Lobbies/" + this.state.lobbyID + "/Team" + this.Id);
+    team.on("value", (snapshot) => {
+      if (snapshot.child("members").exists())
+        this.setState({
+          //status : "active",
+          members : snapshot.val().members,
+        })
+      else
+        this.setState({
+          members: {},
+        })
+    })
   }
 
   render() {
-    var retDiv;
-    switch (this.state.status) {
-      case "active":
-        console.log(this.state.members);
-        retDiv = (
-          <li>
-            <li>Team is Active!</li>
-            {Object.keys(this.state.members).map((key) =>
-              <li key={key}>{this.state.members[key].name}</li>
-            )}
-            <button type="button" class="btn btn-primary btn-sm" onClick={() => this.joinTeam()}>Join Team</button>
-          </li>
-        );
+    var joinTeamButton = <div></div>;
+    var user = firebaseApp.auth().currentUser;
+    var found = false;
+    for (var member in this.state.members) {
+      if (this.state.members[member].id == user.uid) {
+        found = true;
         break;
-      default:
-        retDiv = (
-          <li>Team is Inactive!
-            <button type="button" class="btn btn-primary btn-sm" onClick={() => this.addTeam()}>Add Team</button>
-          </li>
-        )
+      }
     }
+    console.log(this.Id);
+    if (Object.keys(this.state.members).length < 7 && found === false)
+      joinTeamButton = (<button type="button" class="btn btn-primary btn-sm" onClick={() => this.joinTeam()}>Join Team</button>)
+    var retDiv;
+      retDiv = (
+        <ul className="TeamList">
+          <li className="TeamName">{"Team " + this.Id} </li>
+          {Object.keys(this.state.members).map((key) =>
+            <li key={key}>{this.state.members[key].name}</li>
+          )}
+          {joinTeamButton}
+        </ul>
+      );
     return (
-      <ul className="Team">
+      <div className="Team">
           {retDiv}
-      </ul>
+      </div>
     )
   }
 }
