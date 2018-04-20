@@ -21,7 +21,6 @@ class Lobby extends Component {
     }
   }
 
-
   componentDidMount = () => {
     var pathArray = window.location.hash.split( '/' );
     const database = firebaseApp.database();
@@ -41,19 +40,6 @@ class Lobby extends Component {
     console.log(this);
   }
 
-  /*
-  addQuestion = () => {
-    var pathArray = window.location.pathname.split( '/' );
-    const database = firebaseApp.database();
-    const lobbydata = database.ref("Lobbies/" + pathArray[2]);
-
-    lobbydata.update({ numberOfQuestions: this.state.numQ});
-  }
-  <div class="btnhandler">
-    <button id="startbutton" type="button" class="btn btn-primary btn-lg" onClick={this.addQuestion}>Addbenis</button>
-  </div>
-  */
-
   makethegame = () => {
     const database = firebaseApp.database();
     const lobby = database.ref("Lobbies/" + this.state.lobbyId);
@@ -62,26 +48,8 @@ class Lobby extends Component {
     });
   }
 
-  /*handleChange = () => {
-    const database = firebaseApp.database();
-    const team = database.ref("Lobby").child("Team");
-    const members = team.child("member");
-    members.push({
-      id: 1,
-      name: "Emil",
-      points: 5
-    });
-    members.push({
-      id: 2,
-      name: "Isak",
-      points: 100
-    });
-  }*/
-
   render() {
     var lobbyView;
-
-
     switch(this.state.status){
       case 'INITIAL':
       var beginButton = (
@@ -123,7 +91,6 @@ class Lobby extends Component {
         );
         break;
       case 'InProgress':
-        console.log("XD ITS NOT A WORK");
         lobbyView = (
           <div>
             <GameState/>
@@ -131,8 +98,6 @@ class Lobby extends Component {
         )
         break;
     }
-
-
     return (
       <div>
         {lobbyView}
@@ -173,66 +138,48 @@ class TeamSetup extends Component{
     });
   }
 
+  render() {
+    var teams;
+    console.log(this.state.numTeams);
+    switch (this.state.numTeams) {
+      case 2:
+      teams = <div className="TeamSetup">
+                <Team teamid="1" status="active"/>
+                <Team teamid="2" status="active"/>
+                <Team teamid="3" status="inactive"/>
+                <Team teamid="4" status="inactive"/>
+              </div>
+        break;
+      case 3:
 
+      teams = <div className="TeamSetup">
+                <Team teamid="1" status="active"/>
+                <Team teamid="2" status="active"/>
+                <Team teamid="3" status="active"/>
+                <Team teamid="4" status="inactive"/>
+              </div>
 
-
-
-    render() {
-
-
-
-
-
-
-
-      var teams;
-      console.log(this.state.numTeams);
-      switch (this.state.numTeams) {
-        case 2:
-        teams = <div className="TeamSetup">
-                  <Team teamid="1" status="active"/>
-                  <Team teamid="2" status="active"/>
-                  <Team teamid="3" status="inactive"/>
-                  <Team teamid="4" status="inactive"/>
-                </div>
-          break;
-        case 3:
-
+        break;
+        case 4:
         teams = <div className="TeamSetup">
                   <Team teamid="1" status="active"/>
                   <Team teamid="2" status="active"/>
                   <Team teamid="3" status="active"/>
-                  <Team teamid="4" status="inactive"/>
+                  <Team teamid="4" status="active"/>
                 </div>
-
-          break;
-          case 4:
-          teams = <div className="TeamSetup">
-                    <Team teamid="1" status="active"/>
-                    <Team teamid="2" status="active"/>
-                    <Team teamid="3" status="active"/>
-                    <Team teamid="4" status="active"/>
-                  </div>
-          break;
-        default:
-          teams = <b>Failed to load data, please try again</b>
-          break;
-      }
-
-
-
-
-      return (
-        <div >
-          {teams}
-        </div>
-      );
+        break;
+      default:
+        teams = <b>Failed to load data, please try again</b>
+        break;
     }
 
+    return (
+      <div >
+        {teams}
+      </div>
+    );
   }
 
-
-
-
+}
 
 export default Lobby;

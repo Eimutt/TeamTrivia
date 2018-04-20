@@ -192,3 +192,18 @@ input:focus{
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
+
+.QuestionAlternatives {
+	margin-top: 50px;
+	padding: 30px;
+	border: solid black 1px;
+}
+
+.AlternativesGrid {
+	margin: 10%;
+}
+
+#question {
+	margin: 40px;
+	font-size: 2em;
+}
