@@ -18,4 +18,12 @@ We have set up a local primitive trivia game, currently without points and teams
 * A chat
 
 ## Project file structure
-
+App.js: Handles Routers. Responsible for creating an anonymous login and a name of the user.
+GameSetup.js: Handles the structure and data of the game setup screen. Also responsible for printing the game setup screen.
+GameState.js: Handles the currently local game logic. Will handle much more in the future.
+GridItem.js: Currently not used; beginning of effort for splitting up classes into their own js-files for structure.
+Lobby.js: Handles the structure, state and data of the lobby. Also responsible for printing the lobby.
+Team.js: Handles the structure and data of teams. Also responsible for printing the teams.
+firebase.js Handles the connection to the firebase database.
+index.css: Keeps all css-styling for the entire project.
+index.js: Starts the app. Sets up the outer router.
