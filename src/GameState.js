@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import Grid from 'react-css-grid';
+import ScoreBoard from './ScoreBoard';
+import Timer from './Timer';
 
 
 class GameState extends Component{
@@ -16,7 +18,11 @@ class GameState extends Component{
       status: 'Initialize',
       currentQuestion: "",
       answerOptions: [],
-      correctAnswer: ""
+      correctAnswer: "",
+      round: 0,
+      opt1: "",
+      opt2: "",
+      opt3: ""
     }
     this.Id = this.props.teamid;
   }
@@ -25,8 +31,20 @@ class GameState extends Component{
     var pathArray = window.location.hash.split( '/' );
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
+    const roundinfo = database.ref("Lobbies/" + pathArray[2] + "/Rounds/")
     console.log(pathArray[2]);
-    lobbydata.on("value", (snapshot) => {
+    roundinfo.on("value", (snapshot) => {
+      if (snapshot.numChildren() > 0){
+        var data = snapshot.val()["Round" + this.state.round];
+        this.setState({
+          currentQuestion: data.currentQuestion,
+          answerOptions: data.answerOptions,
+          correctAnswer: data.correctAnswer,
+          status: 'QuestionMode'
+        })
+      }
+    })
+    lobbydata.once("value", (snapshot) => {
       this.setState({
         lobbyId : pathArray[2],
         numQ : snapshot.val().numberOfQuestions,
@@ -36,6 +54,7 @@ class GameState extends Component{
         status: 'Ready'
       })
     })
+
   }
 
   getRandomCategory = () => {
@@ -70,6 +89,9 @@ class GameState extends Component{
   }
 
   handleFetchClick = (catID, difficulty) => {
+    var pathArray = window.location.hash.split( '/' );
+    const database = firebaseApp.database();
+    const lobbydata = database.ref("Lobbies/" + pathArray[2]);
     this.fetchQuestion(catID, difficulty).then((json) => {
       console.log(json);
       var answerArray = json.results[0].incorrect_answers;
@@ -78,14 +100,26 @@ class GameState extends Component{
       var temp = answerArray[3];
       answerArray[3] = answerArray[randIndex];
       answerArray[randIndex] = temp;
-      this.setState ({
+      /*this.setState ({
         currentQuestion: json.results[0].question,
         answerOptions: answerArray,
         correctAnswer: json.results[0].correct_answer,
         status: 'QuestionMode'
+      });*/
+      lobbydata.child("Rounds").child("Round" + this.state.round).set({
+        currentQuestion: json.results[0].question,
+        answerOptions: answerArray,
+        correctAnswer: json.results[0].correct_answer,
       });
     });
+
+
   }
+
+  noAnswer(){
+    this.pickAnswer(-1);
+  }
+
 
   pickAnswer = (ans) => {
     if (this.state.correctAnswer == this.state.answerOptions[ans]){
@@ -114,6 +148,10 @@ class GameState extends Component{
         )
         break;
       case 'Ready':
+        var user = firebaseApp.auth().currentUser;
+        //if(user.uid = this.state.hostID)
+
+
         var randCat1 = this.getRandomCategory();
         var randCat2 = this.getRandomCategory();
         var randCat3 = this.getRandomCategory();
@@ -156,7 +194,7 @@ class GameState extends Component{
                 </div>
               </div>
             </Grid>
-
+            <Timer noAnswer={ () => this.noAnswer()}/>
           </div>
         )
         break;
@@ -164,6 +202,7 @@ class GameState extends Component{
     return (
       <div>
         {dataloaded}
+        <ScoreBoard/>
       </div>
     )
   }

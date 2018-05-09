@@ -21,6 +21,32 @@ class GameSetup extends React.Component {
     })
   }
 
+  //TODO: USE THIS FOR DYNAMIC CATEGORYFETCHING
+  //ALSO TODO: FIX DYNAMIC CATEGORYSELECTION IN categories.render
+  fetchCategories = () => {
+    const url = 'https://opentdb.com/api_category.php';
+    return fetch(url)
+      .then(this.processResponse)
+      .catch(this.handleError);
+  }
+
+  processResponse = function (response) {
+    if (response.ok) {
+      return response.json()
+    }
+    throw response;
+  }
+
+  handleError = function (error) {
+    if (error.json) {
+      error.json().then(error => {
+        console.error('fetchCategories() API Error:', error.message || error)
+      })
+    } else {
+      console.error('fetchCategories() API Error:', error.message || error)
+    }
+  }
+
   handleChange = () => {
     const database = firebaseApp.database();
     const Lobbies = database.ref("Lobbies");
@@ -79,7 +105,7 @@ class GameSetup extends React.Component {
         </div>
       )
     var confirmButton = "";
-    console.log(this.state.categories.length);
+    console.log("Number of categories: " + this.state.categories.length);
     if (this.state.categories.length == 0) {
       confirmButton = (
         <div class="btnhandler">

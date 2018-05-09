@@ -43,9 +43,25 @@ class Lobby extends Component {
   makethegame = () => {
     const database = firebaseApp.database();
     const lobby = database.ref("Lobbies/" + this.state.lobbyId);
+    const teams = database.ref("Lobbies/" + this.state.lobbyId + "/Teams/");
+    var id = this.state.lobbyId;
+    teams.once("value", (snapshot) => {
+      var data = snapshot.val();
+      console.log(data);
+      Object.keys(data).map(function(objectKey, index) {
+          //var t = data[objectKey];
+          console.log(objectKey);
+          console.log(id);
+          console.log("Lobbies/" + id + "/Teams/" + objectKey);
+          const team = database.ref("Lobbies/" + id + "/Teams/" + objectKey);
+          team.update({
+            score: 0
+          })
+      });
+    })
     lobby.update({
       status: "InProgress"
-    });
+    })
   }
 
   render() {
@@ -64,7 +80,7 @@ class Lobby extends Component {
       const lobby = database.ref("Lobbies/" + this.state.lobbyId);
       var teamexists = false;
       lobby.on("value", (snapshot) => {
-        if(snapshot.numChildren() > 3)
+        if(snapshot.numChildren() > 4)
           teamexists = true;
       })
       console.log(teamexists);

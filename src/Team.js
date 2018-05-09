@@ -18,10 +18,10 @@ class Team extends Component{
   joinTeam = () => {
     const database = firebaseApp.database();
     const lobby = database.ref("Lobbies/" + this.state.lobbyID);
-    const members = lobby.child("Team" + this.Id + "/members");
+    const members = lobby.child("Teams/Team" + this.Id + "/members");
     var user = firebaseApp.auth().currentUser;
     if (user.photoURL != this.Id) {
-      const prevTeam = lobby.child("Team" + user.photoURL + "/members");
+      const prevTeam = lobby.child("Teams/Team" + user.photoURL + "/members");
       prevTeam.once("value", (snapshot) => {
         if (snapshot.exists()) {
           console.log(snapshot.val());
@@ -50,7 +50,7 @@ class Team extends Component{
       status: "active"
     })*/
     const database = firebaseApp.database();
-    const team = database.ref("Lobbies/" + this.state.lobbyID + "/Team" + this.Id);
+    const team = database.ref("Lobbies/" + this.state.lobbyID + "/Teams/Team" + this.Id);
     /*team.set({
       status: "active"
     })*/
@@ -69,7 +69,7 @@ class Team extends Component{
     console.log("benisu");
     console.log(this.state.lobbyID);
     const database = firebaseApp.database();
-    const team = database.ref("Lobbies/" + this.state.lobbyID + "/Team" + this.Id);
+    const team = database.ref("Lobbies/" + this.state.lobbyID + "/Teams/Team" + this.Id);
     team.on("value", (snapshot) => {
       if (snapshot.child("members").exists())
         this.setState({

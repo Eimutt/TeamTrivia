@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
-import Welcome from './Welcome';
+//import Welcome from './Welcome';
+import GameSetup from './GameSetup';
 import Lobby from './Lobby';
 import firebaseApp from "./firebase";
 import index from "./index.css";
@@ -100,7 +101,7 @@ class App extends Component {
       case 'Name Chosen':
       namechosen =
         <div>
-          <Route exact path="/" displayname={this.state.displayname} component={Welcome}/>
+          <Route exact path="/" displayname={this.state.displayname} component={GameSetup}/>
           <Route path="/lobby/" render={() => <Lobby displayname={this.state.displayName}/>}/>
         </div>
         break;
