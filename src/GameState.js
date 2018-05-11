@@ -16,6 +16,7 @@ class GameState extends Component{
       numberOfQuestions: "",
       categories: [],
       status: 'Initialize',
+      gameState: 'Initialize',
       currentQuestion: "",
       answerOptions: [],
       correctAnswer: "",
@@ -24,7 +25,8 @@ class GameState extends Component{
       opt2: "",
       opt3: ""
     }
-    this.Id = this.props.teamid;
+    this.numTeams = this.props.teams;
+    console.log(this.numTeams)
   }
 
   componentDidMount = () => {
@@ -32,6 +34,7 @@ class GameState extends Component{
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
     const roundinfo = database.ref("Lobbies/" + pathArray[2] + "/Rounds/")
+    const roundData = database.ref("Lobbies/" + pathArray[2] + "/RoundData/")
     console.log(pathArray[2]);
     roundinfo.on("value", (snapshot) => {
       if (snapshot.numChildren() > 0){
@@ -44,6 +47,18 @@ class GameState extends Component{
         })
       }
     })
+    roundData.on("value", (snapshot) => {
+      if (snapshot.numChildren() > 0){
+        var data = snapshot.val();
+        this.setState({
+          round: data.Round,
+          gameState: data.GameState
+        })
+      }
+    })
+
+
+
     lobbydata.once("value", (snapshot) => {
       this.setState({
         lobbyId : pathArray[2],
@@ -51,7 +66,7 @@ class GameState extends Component{
         categories : snapshot.val().categories,
         hostId : snapshot.val().host.hostId,
         hostName: snapshot.val().host.hostName,
-        status: 'Ready'
+        gameState: 'Ready'
       })
     })
 
@@ -111,6 +126,12 @@ class GameState extends Component{
         answerOptions: answerArray,
         correctAnswer: json.results[0].correct_answer,
       });
+      lobbydata.update({
+        RoundData: {
+          GameState: 'QuestionMode',
+          Round: this.state.round
+        }
+      })
     });
 
 
@@ -122,24 +143,52 @@ class GameState extends Component{
 
 
   pickAnswer = (ans) => {
-    if (this.state.correctAnswer == this.state.answerOptions[ans]){
-      alert("Correct!")
-      this.setState({
-        status: 'Ready'
-      });
-    }
-    else {
-      alert("Wrong! \nCorrect answer is : " + this.state.correctAnswer);
-      this.setState({
-        status: 'Ready'
-      });
-    }
+    var user = firebaseApp.auth().currentUser;
+    var pathArray = window.location.hash.split( '/' );
+    this.state.lobbyID = pathArray[2];
+    const database = firebaseApp.database();
+    const teams = database.ref("Lobbies/" + this.state.lobbyID + "/Teams");
+    const round = database.ref("Lobbies/" + this.state.lobbyID + "/Rounds/Round" + this.state.round);
+    const team = round.child('Team' + user.photoURL);
+    team.set({
+      answered: true,
+      choice: ans,
+    })
+    round.once("value", (snapshot) => {
+      console.log("fuck" + snapshot.numChildren());
+      console.log("shit"+ this.props.teams);
+      if(snapshot.numChildren() > (2 + this.props.teams)){
+        var choices = snapshot.val();
+        console.log(choices);
+        for(var i = 0; i < 4; i++){
+          var teamN = 'Team' + i;
+          console.log(teamN);
+          if(snapshot.child(teamN).exists()){
+            console.log("bnies");
+            if(this.state.correctAnswer == this.state.answerOptions[snapshot.child(teamN).val().choice]){
+              const teamscore = teams.child(teamN).child('score');
+              teamscore.transaction(function(score){
+                return score+1;
+              });
+            }
+          }
+        }
+
+        const lobbydata = database.ref("Lobbies/" + this.state.lobbyID);
+        lobbydata.update({
+          RoundData: {
+            GameState: 'Ready',
+            Round: this.state.round + 1
+          }
+        })
+      }
+    })
   }
 
   render() {
     var dataloaded;
 
-    switch(this.state.status){
+    switch(this.state.gameState){
       case 'Initialize':
         dataloaded = (
           <div>
@@ -149,8 +198,6 @@ class GameState extends Component{
         break;
       case 'Ready':
         var user = firebaseApp.auth().currentUser;
-        //if(user.uid = this.state.hostID)
-
 
         var randCat1 = this.getRandomCategory();
         var randCat2 = this.getRandomCategory();

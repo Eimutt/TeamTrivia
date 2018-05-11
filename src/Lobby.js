@@ -17,7 +17,8 @@ class Lobby extends Component {
       categories: [],
       lobbyId: "",
       hostId: "",
-      hostName: ""
+      hostName: "",
+      numTeams: 0
     }
   }
 
@@ -45,6 +46,7 @@ class Lobby extends Component {
     const lobby = database.ref("Lobbies/" + this.state.lobbyId);
     const teams = database.ref("Lobbies/" + this.state.lobbyId + "/Teams/");
     var id = this.state.lobbyId;
+    var nTeams = 0;
     teams.once("value", (snapshot) => {
       var data = snapshot.val();
       console.log(data);
@@ -57,10 +59,14 @@ class Lobby extends Component {
           team.update({
             score: 0
           })
+          nTeams++;
       });
     })
     lobby.update({
       status: "InProgress"
+    })
+    this.setState({
+      numTeams : nTeams
     })
   }
 
@@ -109,7 +115,7 @@ class Lobby extends Component {
       case 'InProgress':
         lobbyView = (
           <div>
-            <GameState/>
+            <GameState teams={this.state.numTeams}/>
           </div>
         )
         break;
