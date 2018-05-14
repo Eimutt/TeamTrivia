@@ -25,7 +25,6 @@ class GameState extends Component{
       opt2: "",
       opt3: ""
     }
-    this.numTeams = this.props.teams;
     console.log(this.numTeams)
   }
 
@@ -66,7 +65,8 @@ class GameState extends Component{
         categories : snapshot.val().categories,
         hostId : snapshot.val().host.hostId,
         hostName: snapshot.val().host.hostName,
-        gameState: 'Ready'
+        gameState: 'Ready',
+        numTeams: snapshot.val().numTeams
       })
     })
 
@@ -150,35 +150,39 @@ class GameState extends Component{
     const teams = database.ref("Lobbies/" + this.state.lobbyID + "/Teams");
     const round = database.ref("Lobbies/" + this.state.lobbyID + "/Rounds/Round" + this.state.round);
     const team = round.child('Team' + user.photoURL);
-    team.set({
-      answered: true,
-      choice: ans,
-    })
-    round.once("value", (snapshot) => {
-      console.log("fuck" + snapshot.numChildren());
-      console.log("shit"+ this.props.teams);
-      if(snapshot.numChildren() > (2 + this.props.teams)){
-        var choices = snapshot.val();
-        console.log(choices);
-        for(var i = 0; i < 4; i++){
-          var teamN = 'Team' + i;
-          console.log(teamN);
-          if(snapshot.child(teamN).exists()){
-            console.log("bnies");
-            if(this.state.correctAnswer == this.state.answerOptions[snapshot.child(teamN).val().choice]){
-              const teamscore = teams.child(teamN).child('score');
-              teamscore.transaction(function(score){
-                return score+1;
-              });
+    team.once("value", (snapshot) => {
+      if(!(snapshot.exists())){
+        team.set({
+          answered: true,
+          choice: ans,
+        })
+        round.once("value", (snapshot) => {
+          console.log("fuck" + snapshot.numChildren());
+          console.log("shit"+ this.props.teams);
+          if(snapshot.numChildren() > (2 + this.state.numTeams)){
+            var choices = snapshot.val();
+            console.log(choices);
+            for(var i = 1; i < 5; i++){
+              var teamN = 'Team' + i;
+              console.log(teamN);
+              if(snapshot.child(teamN).exists()){
+                console.log("bnies");
+                if(this.state.correctAnswer == this.state.answerOptions[snapshot.child(teamN).val().choice]){
+                  const teamscore = teams.child(teamN).child('score');
+                  teamscore.transaction(function(score){
+                    return score+1;
+                  });
+                }
+              }
             }
-          }
-        }
 
-        const lobbydata = database.ref("Lobbies/" + this.state.lobbyID);
-        lobbydata.update({
-          RoundData: {
-            GameState: 'Ready',
-            Round: this.state.round + 1
+            const lobbydata = database.ref("Lobbies/" + this.state.lobbyID);
+            lobbydata.update({
+              RoundData: {
+                GameState: 'Ready',
+                Round: this.state.round + 1
+              }
+            })
           }
         })
       }

@@ -61,6 +61,9 @@ class Lobby extends Component {
           })
           nTeams++;
       });
+      lobby.update({
+        numTeams: nTeams
+      })
     })
     lobby.update({
       status: "InProgress"
