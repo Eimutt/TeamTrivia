@@ -30,6 +30,9 @@ class GameState extends Component{
   }
 
   componentDidMount = () => {
+    var user = firebaseApp.auth().currentUser;
+    this.user = user;
+    console.log(this.user);
     var pathArray = window.location.hash.split( '/' );
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
@@ -94,6 +97,32 @@ class GameState extends Component{
     return this.state.categories[index];
   }
 
+  getCategories = () => {
+    console.log(this.state.categories);
+    const database = firebaseApp.database();
+    const round = database.ref("Lobbies/" + this.state.lobbyId + "/CatOptions/");
+    var randCat1 = this.getRandomCategory();
+    var randCat2 = this.getRandomCategory();
+    var randCat3 = this.getRandomCategory();
+    round.update({
+      CategoryOptions: {
+        Cat1: {
+          catid: randCat1.id,
+          name: randCat1.name
+        },
+        Cat2: {
+          catid: randCat2.id,
+          name: randCat2.name
+        },
+        Cat3: {
+          catid: randCat3.id,
+          name: randCat3.name
+        },
+        round: this.state.round
+      }
+    })
+  }
+
   fetchQuestion = (category, difficulty) => {
     const url = 'https://opentdb.com/api.php?amount=1&category=' + category + '&difficulty=' + difficulty + '&type=multiple';
     return fetch(url)
@@ -119,38 +148,39 @@ class GameState extends Component{
   }
 
   handleFetchClick = (catID, difficulty) => {
-    var pathArray = window.location.hash.split( '/' );
-    const database = firebaseApp.database();
-    const lobbydata = database.ref("Lobbies/" + pathArray[2]);
-    this.fetchQuestion(catID, difficulty).then((json) => {
-      console.log(json);
-      var answerArray = json.results[0].incorrect_answers;
-      answerArray.push(json.results[0].correct_answer);
-      var randIndex = parseInt(Math.random() * 4);
-      var temp = answerArray[3];
-      answerArray[3] = answerArray[randIndex];
-      answerArray[randIndex] = temp;
-      /*this.setState ({
-        currentQuestion: json.results[0].question,
-        answerOptions: answerArray,
-        correctAnswer: json.results[0].correct_answer,
-        status: 'QuestionMode'
-      });*/
-      lobbydata.child("Rounds").child("Round" + this.state.round).set({
-        currentQuestion: json.results[0].question,
-        answerOptions: answerArray,
-        correctAnswer: json.results[0].correct_answer,
-        difficulty: json.results[0].difficulty,
+    if(this.user.photoURL != null){
+      var pathArray = window.location.hash.split( '/' );
+      const database = firebaseApp.database();
+      const lobbydata = database.ref("Lobbies/" + pathArray[2]);
+      this.fetchQuestion(catID, difficulty).then((json) => {
+        console.log(json);
+        var answerArray = json.results[0].incorrect_answers;
+        answerArray.push(json.results[0].correct_answer);
+        var randIndex = parseInt(Math.random() * 4);
+        var temp = answerArray[3];
+        answerArray[3] = answerArray[randIndex];
+        answerArray[randIndex] = temp;
+        /*this.setState ({
+          currentQuestion: json.results[0].question,
+          answerOptions: answerArray,
+          correctAnswer: json.results[0].correct_answer,
+          status: 'QuestionMode'
+        });*/
+        lobbydata.child("Rounds").child("Round" + this.state.round).set({
+          currentQuestion: json.results[0].question,
+          answerOptions: answerArray,
+          correctAnswer: json.results[0].correct_answer,
+          difficulty: json.results[0].difficulty,
+        });
+        lobbydata.update({
+          RoundData: {
+            GameState: 'QuestionMode',
+            Round: this.state.round
+          }
+        })
       });
-      lobbydata.update({
-        RoundData: {
-          GameState: 'QuestionMode',
-          Round: this.state.round
-        }
-      })
-    });
 
-
+    }
   }
 
   noAnswer(){
@@ -159,59 +189,61 @@ class GameState extends Component{
 
 
   pickAnswer = (ans) => {
-    var user = firebaseApp.auth().currentUser;
-    const database = firebaseApp.database();
-    const teams = database.ref("Lobbies/" + this.state.lobbyId + "/Teams");
-    const round = database.ref("Lobbies/" + this.state.lobbyId + "/Rounds/Round" + this.state.round);
-    const team = round.child('Team' + user.photoURL);
-    team.once("value", (snapshot) => {
-      if(!(snapshot.exists())){
-        team.set({
-          answered: true,
-          choice: ans,
-          pickedBy: user.displayName
-        })
-        round.once("value", (snapshot) => {
-          if(snapshot.numChildren() > (3 + this.state.numTeams)){
-            var choices = snapshot.val();
-            for(var i = 1; i < 5; i++){
-              var teamN = 'Team' + i;
-              if(snapshot.child(teamN).exists()){
-                if(this.state.correctAnswer == this.state.answerOptions[snapshot.child(teamN).val().choice]){
-                  var questionworth = 0;
-                  switch (this.state.difficulty) {
-                    case 'easy':
-                        questionworth = 1;
-                      break;
-                    case 'medium':
-                        questionworth = 2;
-                      break;
-                    case 'hard':
-                        questionworth = 3;
-                      break;
-                    }
-                  const teamscore = teams.child(teamN).child('score');
-                  teamscore.transaction(function(score){
-                    return score+questionworth;
-                  });
+    if(this.user.photoURL != null){
+      const database = firebaseApp.database();
+      const teams = database.ref("Lobbies/" + this.state.lobbyId + "/Teams");
+      const round = database.ref("Lobbies/" + this.state.lobbyId + "/Rounds/Round" + this.state.round);
+      const team = round.child('Team' + this.user.photoURL);
+      team.once("value", (snapshot) => {
+        if(!(snapshot.exists())){
+          team.set({
+            answered: true,
+            choice: ans,
+            pickedBy: this.user.displayName
+          })
+          round.once("value", (snapshot) => {
+            if(snapshot.numChildren() > (3 + this.state.numTeams)){
+              var choices = snapshot.val();
+              for(var i = 1; i < 5; i++){
+                var teamN = 'Team' + i;
+                if(snapshot.child(teamN).exists()){
+                  if(this.state.correctAnswer == this.state.answerOptions[snapshot.child(teamN).val().choice]){
+                    var questionworth = 0;
+                    switch (this.state.difficulty) {
+                      case 'easy':
+                          questionworth = 1;
+                        break;
+                      case 'medium':
+                          questionworth = 2;
+                        break;
+                      case 'hard':
+                          questionworth = 3;
+                        break;
+                      }
+                    const teamscore = teams.child(teamN).child('score');
+                    teamscore.transaction(function(score){
+                      return score+questionworth;
+                    });
+                  }
                 }
               }
-            }
 
-            const lobbydata = database.ref("Lobbies/" + this.state.lobbyId);
-            lobbydata.update({
-              RoundData: {
-                GameState: 'GetQuestion',
-                Round: this.state.round + 1
-              }
-            })
-          }
-        })
-      }
-    })
+              const lobbydata = database.ref("Lobbies/" + this.state.lobbyId);
+              lobbydata.update({
+                RoundData: {
+                  GameState: 'GetQuestion',
+                  Round: this.state.round + 1
+                }
+              })
+            }
+          })
+        }
+      })
+    }
   }
 
   render() {
+    console.log(this.state.gameState);
     var dataloaded;
     switch(this.state.gameState){
       case 'Initialize':
@@ -222,30 +254,9 @@ class GameState extends Component{
         )
         break;
       case 'GetQuestion':
-        var user = firebaseApp.auth().currentUser;
-        if(user.uid == this.state.hostId){
-          const database = firebaseApp.database();
-          const round = database.ref("Lobbies/" + this.state.lobbyId + "/CatOptions/");
-          var randCat1 = this.getRandomCategory();
-          var randCat2 = this.getRandomCategory();
-          var randCat3 = this.getRandomCategory();
-          round.update({
-            CategoryOptions: {
-              Cat1: {
-                catid: randCat1.id,
-                name: randCat1.name
-              },
-              Cat2: {
-                catid: randCat2.id,
-                name: randCat2.name
-              },
-              Cat3: {
-                catid: randCat3.id,
-                name: randCat3.name
-              }
-            }
-          })
-
+        if(this.user.uid == this.state.hostId){
+          this.getCategories();
+          dataloaded = <div> Generatin CATEGOREIS :DDD </div>
         }
         break;
       case 'Ready':
