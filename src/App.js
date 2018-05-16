@@ -96,7 +96,7 @@ class App extends Component {
       case 'Pick Name':
       namechosen =
       <div>
-        <NameInput confirmcallback={() => this.pickName()}/>
+        <NameInput confirmcallback={this.pickName}/>
       </div>
       break;
       case 'Name Chosen':
