@@ -29,7 +29,6 @@ class Timer extends Component {
     this.setState({
       timer: this.state.timer - 1,
     });
-    console.log(this.state.timer);
     if (this.state.timer < 1)
       this.props.noAnswer();
   }
