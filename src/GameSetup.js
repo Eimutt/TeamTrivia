@@ -10,9 +10,7 @@ class GameSetup extends React.Component {
     // we put on state the properties we want to use and modify in the component
     this.state = {
       numberOfQuestions: 10,
-      categories: [],
       currentcategories: [],
-      //categories: [{"categoryid":15,"categoryname":"Video Games"},{"categoryid":10,"categoryname":"Books"},{"categoryid":31,"categoryname":"Anime and Manga"},{"categoryid":17,"categoryname":"Science and Nature"},{"categoryid":12,"categoryname":"Music"},{"categoryid":11,"categoryname":"Film"},{"categoryid":9,"categoryname":"General Knowledge"},{"categoryid":14,"categoryname":"Television"},{"categoryid":22,"categoryname":"Geography"},{"categoryid":20,"categoryname":"Mythology"},{"categoryid":19,"categoryname":"Mathematics"},{"categoryid":18,"categoryname":"Computers"},{"categoryid":23,"categoryname":"History"},{"categoryid":24,"categoryname":"Politics"},{"categoryid":27,"categoryname":"Animals"},{"categoryid":26,"categoryname":"Celebrities"}],
       lobbyID: ""
     }
   }
@@ -21,32 +19,6 @@ class GameSetup extends React.Component {
     this.setState({
       lobbyID: e,
     })
-  }
-
-  //TODO: USE THIS FOR DYNAMIC CATEGORYFETCHING
-  //ALSO TODO: FIX DYNAMIC CATEGORYSELECTION IN categories.render
-  fetchCategories = () => {
-    const url = 'https://opentdb.com/api_category.php';
-    return fetch(url)
-      .then(this.processResponse)
-      .catch(this.handleError);
-  }
-
-  processResponse = function (response) {
-    if (response.ok) {
-      return response.json()
-    }
-    throw response;
-  }
-
-  handleError = function (error) {
-    if (error.json) {
-      error.json().then(error => {
-        console.error('fetchCategories() API Error:', error.message || error)
-      })
-    } else {
-      console.error('fetchCategories() API Error:', error.message || error)
-    }
   }
 
   handleChange = () => {
@@ -62,7 +34,7 @@ class GameSetup extends React.Component {
         hostName: user.displayName
       }),
       numberOfQuestions: this.state.numberOfQuestions,
-      categories: this.state.categories,
+      categories: this.state.currentcategories,
       status: "INITIAL"
     });
   }
@@ -95,12 +67,12 @@ class GameSetup extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchCategories().then((json) => {
+    /*this.fetchCategories().then((json) => {
       console.log(json);
       this.setState({
         categories: json.trivia_categories,
       })
-    });
+    });*/
   }
 
   render() {
@@ -114,7 +86,7 @@ class GameSetup extends React.Component {
         </div>
       )
     var confirmButton = "";
-    console.log("Number of total categories: " + this.state.categories.length);
+    //console.log("Number of total categories: " + this.state.categories.length);
     console.log("Number of current categories: " + this.state.currentcategories.length);
     if (this.state.currentcategories.length == 0) {
       confirmButton = (
@@ -137,7 +109,7 @@ class GameSetup extends React.Component {
             <div>Number of Questions:</div>
             <input id="numberOfQuestions" type="number" min="1" input="number" value={this.state.numberOfQuestions} onChange={this.onNumberOfGuestsChanged}></input>
           </div>
-          <Categories categories={this.state.categories} callback={this.addCategory}/>
+          <Categories callback={this.addCategory}/>
         </div>
         {confirmButton}
         {toPrintLink}
@@ -154,6 +126,44 @@ class Categories extends React.Component {
     // We create the state to store the various statuses
     // e.g. API data loading or error
     //  <GridItem categoryID={9} categoryName={"General Knowledge"} callback1={this.handleClick}/>
+    this.state = {
+      categories: [],
+      status: "loading"
+    }
+  }
+
+  componentDidMount() {
+    this.fetchCategories().then((json) => {
+      console.log(json);
+      this.setState({
+        categories: json.trivia_categories,
+        status: "ready"
+      })
+    });
+  }
+
+  fetchCategories = () => {
+    const url = 'https://opentdb.com/api_category.php';
+    return fetch(url)
+      .then(this.processResponse)
+      .catch(this.handleError);
+  }
+
+  processResponse = function (response) {
+    if (response.ok) {
+      return response.json()
+    }
+    throw response;
+  }
+
+  handleError = function (error) {
+    if (error.json) {
+      error.json().then(error => {
+        console.error('fetchCategories() API Error:', error.message || error)
+      })
+    } else {
+      console.error('fetchCategories() API Error:', error.message || error)
+    }
   }
 
   handleClick(categoryid, categoryname) {
@@ -161,45 +171,57 @@ class Categories extends React.Component {
   }
 
   render() {
-    var categories = this.props.categories;
-    var columnsize = (categories.length/4);
-    var remainder = (categories.length % 4);
-    var columns = [];
-    for (var i = 0; i < 4; i++) {
-      currentcolumnsize = columnsize;
-      var column = [];
-      if (remainder != 0) {
-        var currentcolumnsize = columnsize + 1;
-        remainder--;
-      }
-      for (var j = 0; j < currentcolumnsize; j++) {
-        column.push(categories[j]);
-      }
-      categories.splice(0,currentcolumnsize);
-      columns.push(column);
-    }
-    console.log(columns);
-    return (
-      <div className = "CategoryContainer">
-        <div className= "categoryTitle">{"Categories"}</div>
-        <Grid
-          width={0}
-          gap={0}>
-          {columns.map((column) =>
-            <div id="column">
-              {column.map((category) =>
-                <div className= "griditem">
-                  <div className="categoryname">{category.name.replace("Entertainment: ", "").replace("Science: ", "")}</div>
-                  <label class="switch">
-                    <input type="checkbox" onClick={() => this.handleClick(category.id, category.name)}></input>
-                    <span class="slider round"></span>
-                  </label>
+    var toRender = "";
+    switch (this.state.status) {
+      case "loading":
+        toRender = (<div className="loader"></div>);
+        break;
+
+      default:
+        var categories = this.state.categories;
+        var sequence = 0;
+        var columnsize = (categories.length/4);
+        var remainder = (categories.length % 4);
+        var columns = [];
+        for (var i = 0; i < 4; i++) {
+          currentcolumnsize = columnsize;
+          var column = [];
+          if (remainder != 0) {
+            var currentcolumnsize = columnsize + 1;
+            remainder--;
+          }
+          for (var j = 0; j < currentcolumnsize; j++) {
+            column.push(categories[j+sequence*columnsize]);
+          }
+          sequence++;
+          columns.push(column);
+        }
+        toRender = (
+          <div className = "CategoryContainer">
+            <div className= "categoryTitle">{"Categories"}</div>
+            <Grid
+              width={0}
+              gap={0}>
+              {columns.map((column) =>
+                <div id="column">
+                  {column.map((category) =>
+                    <div className= "griditem">
+                      <div className="categoryname">{category.name.replace("Entertainment: ", "").replace("Science: ", "")}</div>
+                      <label class="switch">
+                        <input type="checkbox" onClick={() => this.handleClick(category.id, category.name)}></input>
+                        <span class="slider round"></span>
+                      </label>
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
-          )}
-        </Grid>
-      </div>
+            </Grid>
+          </div>
+        );
+        break;
+    }
+    return (
+      <div>{toRender}</div>
     );
   }
 }
