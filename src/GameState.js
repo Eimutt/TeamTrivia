@@ -5,6 +5,7 @@ import Grid from 'react-css-grid';
 import ScoreBoard from './ScoreBoard';
 import Timer from './Timer';
 import AnswerOptionsGrid from './AnswerOptionsGrid';
+import RoundResults from './RoundResults';
 
 
 class GameState extends Component{
@@ -283,6 +284,13 @@ class GameState extends Component{
             <div id="question">{this.state.currentQuestion.replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</div>
             <AnswerOptionsGrid pickAnswer={ (ans) => this.pickAnswer(ans)} round =  {this.state.round} options = {this.state.answerOptions} lobbyId = {this.state.lobbyId}/>
             <Timer noAnswer={ () => this.noAnswer()}/>
+          </div>
+        )
+        break;
+      case 'RoundResults':
+        dataloaded = (
+          <div>
+            <RoundResults/>
           </div>
         )
         break;
