@@ -9,6 +9,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
+    "react-css-grid": "^2.0.0-0",
     "react-scripts": "1.1.1",
     "reactstrap": "^5.0.0-beta.2"
   },
