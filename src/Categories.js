@@ -92,13 +92,6 @@ class Categories extends React.Component {
         );
         break;
     }
-    /*<Col sm={3} className="griditem">
-      <div className="categoryname">{category.name.replace("Entertainment: ", "").replace("Science: ", "")}</div>
-      <label class="switch">
-        <input type="checkbox" onClick={() => this.handleClick(category.id, category.name)}></input>
-        <span class="slider round"></span>
-      </label>
-    </Col> */
     return (
       <div>{toRender}</div>
     );
