@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import GridItem from "./GridItem";
-import Grid from 'react-css-grid';
+import {Col, Container, Row} from 'react-grid-system';
+import Categories from './Categories'
 
 class GameSetup extends React.Component {
   constructor(props) {
@@ -114,114 +115,6 @@ class GameSetup extends React.Component {
         {confirmButton}
         {toPrintLink}
       </div>
-    );
-  }
-}
-
-class Categories extends React.Component {
-  constructor(props) {
-    super(props);
-    console.log(props);
-    //this.props.model.addObserver(this);
-    // We create the state to store the various statuses
-    // e.g. API data loading or error
-    //  <GridItem categoryID={9} categoryName={"General Knowledge"} callback1={this.handleClick}/>
-    this.state = {
-      categories: [],
-      status: "loading"
-    }
-  }
-
-  componentDidMount() {
-    this.fetchCategories().then((json) => {
-      console.log(json);
-      this.setState({
-        categories: json.trivia_categories,
-        status: "ready"
-      })
-    });
-  }
-
-  fetchCategories = () => {
-    const url = 'https://opentdb.com/api_category.php';
-    return fetch(url)
-      .then(this.processResponse)
-      .catch(this.handleError);
-  }
-
-  processResponse = function (response) {
-    if (response.ok) {
-      return response.json()
-    }
-    throw response;
-  }
-
-  handleError = function (error) {
-    if (error.json) {
-      error.json().then(error => {
-        console.error('fetchCategories() API Error:', error.message || error)
-      })
-    } else {
-      console.error('fetchCategories() API Error:', error.message || error)
-    }
-  }
-
-  handleClick(categoryid, categoryname) {
-    this.props.callback(categoryid, categoryname);
-  }
-
-  render() {
-    var toRender = "";
-    switch (this.state.status) {
-      case "loading":
-        toRender = (<div className="loader"></div>);
-        break;
-
-      default:
-        var categories = this.state.categories;
-        var sequence = 0;
-        var columnsize = (categories.length/4);
-        var remainder = (categories.length % 4);
-        var columns = [];
-        for (var i = 0; i < 4; i++) {
-          currentcolumnsize = columnsize;
-          var column = [];
-          if (remainder != 0) {
-            var currentcolumnsize = columnsize + 1;
-            remainder--;
-          }
-          for (var j = 0; j < currentcolumnsize; j++) {
-            column.push(categories[j+sequence*columnsize]);
-          }
-          sequence++;
-          columns.push(column);
-        }
-        toRender = (
-          <div className = "CategoryContainer">
-            <div className= "categoryTitle">{"Categories"}</div>
-            <Grid
-              width={0}
-              gap={0}>
-              {columns.map((column) =>
-                <div id="column">
-                  {column.map((category) =>
-                    <div className= "griditem">
-                      <div className="categoryname">{category.name.replace("Entertainment: ", "").replace("Science: ", "")}</div>
-                      <label class="switch">
-                        <input type="checkbox" onClick={() => this.handleClick(category.id, category.name)}></input>
-                        <span class="slider round"></span>
-                      </label>
-                    </div>
-                  )}
-                </div>
-              )}
-            </Grid>
-          </div>
-        );
-        break;
-    }
-    return (
-      <div>{toRender}</div>
     );
   }
 }
