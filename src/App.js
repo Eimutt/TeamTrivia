@@ -21,6 +21,7 @@ class App extends Component {
     var user = firebaseApp.auth().currentUser;
     user.updateProfile({
       displayName: name,
+      photoURL: '0'
     }).then(function() {
       // Profile updated successfully!
       // "Jane Q. User"
@@ -32,7 +33,7 @@ class App extends Component {
     console.log(user);
     this.setState({
       displayName : name,
-      status : 'Name Chosen'
+      status : 'Name Chosen',
     })
   }
 
@@ -95,7 +96,7 @@ class App extends Component {
       case 'Pick Name':
       namechosen =
       <div>
-        <NameInput confirmcallback={this.pickName}/>
+        <NameInput confirmcallback={() => this.pickName()}/>
       </div>
       break;
       case 'Name Chosen':
