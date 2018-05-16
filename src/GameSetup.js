@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import GridItem from "./GridItem";
 import Grid from 'react-css-grid';
+import {Col, Container, Row} from 'react-grid-system';
 
 class GameSetup extends React.Component {
   constructor(props) {
@@ -180,44 +181,40 @@ class Categories extends React.Component {
       default:
         var categories = this.state.categories;
         var sequence = 0;
-        var columnsize = (categories.length/4);
+        var rowamount = (categories.length/4);
         var remainder = (categories.length % 4);
-        var columns = [];
-        for (var i = 0; i < 4; i++) {
-          currentcolumnsize = columnsize;
-          var column = [];
-          if (remainder != 0) {
-            var currentcolumnsize = columnsize + 1;
-            remainder--;
-          }
-          for (var j = 0; j < currentcolumnsize; j++) {
-            column.push(categories[j+sequence*columnsize]);
+        if (remainder != 0)
+          rowamount++;
+        var rows = [];
+        for (var i = 0; i < rowamount; i++) {
+          var row = [];
+          for (var j = 0; j < 4; j++) {
+            row.push(categories[j+sequence*4]);
           }
           sequence++;
-          columns.push(column);
+          rows.push(row);
         }
         toRender = (
           <div className = "CategoryContainer">
             <div className= "categoryTitle">{"Categories"}</div>
-            <Grid
-              width={0}
-              gap={0}>
-              {columns.map((column) =>
-                <div id="column">
-                  {column.map((category) =>
-                    <div className= "griditem">
+            <Container>
+              {rows.map((row) =>
+                <Row>
+                  {row.map((category) =>
+                    <Col sm={3} className="griditem">
                       <div className="categoryname">{category.name.replace("Entertainment: ", "").replace("Science: ", "")}</div>
                       <label class="switch">
                         <input type="checkbox" onClick={() => this.handleClick(category.id, category.name)}></input>
                         <span class="slider round"></span>
                       </label>
-                    </div>
+                    </Col>
                   )}
-                </div>
+                </Row>
               )}
-            </Grid>
+            </Container>
           </div>
         );
+        console.log(rows);
         break;
     }
     return (
