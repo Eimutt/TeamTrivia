@@ -169,7 +169,7 @@ class GameState extends Component{
         team.set({
           answered: true,
           choice: ans,
-          pickedBy: user.uid
+          pickedBy: user.displayName
         })
         round.once("value", (snapshot) => {
           if(snapshot.numChildren() > (3 + this.state.numTeams)){
@@ -232,16 +232,16 @@ class GameState extends Component{
           round.update({
             CategoryOptions: {
               Cat1: {
-                catid: randCat1.categoryid,
-                name: randCat1. categoryname
+                catid: randCat1.id,
+                name: randCat1.name
               },
               Cat2: {
-                catid: randCat2.categoryid,
-                name: randCat2. categoryname
+                catid: randCat2.id,
+                name: randCat2.name
               },
               Cat3: {
-                catid: randCat3.categoryid,
-                name: randCat3. categoryname
+                catid: randCat3.id,
+                name: randCat3.name
               }
             }
           })
