@@ -4,6 +4,7 @@ import firebaseApp from "./firebase";
 import Grid from 'react-css-grid';
 import ScoreBoard from './ScoreBoard';
 import Timer from './Timer';
+import AnswerOptionsGrid from './AnswerOptionsGrid';
 
 
 class GameState extends Component{
@@ -12,7 +13,7 @@ class GameState extends Component{
     // we put on state the properties we want to use and modify in the component
     this.state = {
       members: [],
-      lobbyID: "",
+      lobbyId: "",
       numberOfQuestions: "",
       categories: [],
       status: 'Initialize',
@@ -20,12 +21,12 @@ class GameState extends Component{
       currentQuestion: "",
       answerOptions: [],
       correctAnswer: "",
+      difficulty: "",
       round: 0,
-      opt1: "",
-      opt2: "",
-      opt3: ""
+      Cat1: {},
+      Cat2: {},
+      Cat3: {}
     }
-    console.log(this.numTeams)
   }
 
   componentDidMount = () => {
@@ -34,6 +35,7 @@ class GameState extends Component{
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
     const roundinfo = database.ref("Lobbies/" + pathArray[2] + "/Rounds/")
     const roundData = database.ref("Lobbies/" + pathArray[2] + "/RoundData/")
+    const catOpts = database.ref("Lobbies/" + pathArray[2] + "/CatOptions/")
     console.log(pathArray[2]);
     roundinfo.on("value", (snapshot) => {
       if (snapshot.numChildren() > 0){
@@ -42,7 +44,9 @@ class GameState extends Component{
           currentQuestion: data.currentQuestion,
           answerOptions: data.answerOptions,
           correctAnswer: data.correctAnswer,
-          status: 'QuestionMode'
+          difficulty: data.difficulty,
+          gameState: 'QuestionMode',
+
         })
       }
     })
@@ -52,6 +56,17 @@ class GameState extends Component{
         this.setState({
           round: data.Round,
           gameState: data.GameState
+        })
+      }
+    })
+    catOpts.on("value", (snapshot) => {
+      if (snapshot.numChildren() > 0){
+        var data = snapshot.val();
+        this.setState({
+          Cat1: data.CategoryOptions.Cat1,
+          Cat2: data.CategoryOptions.Cat2,
+          Cat3: data.CategoryOptions.Cat3,
+          gameState: 'Ready'
         })
       }
     })
@@ -65,7 +80,7 @@ class GameState extends Component{
         categories : snapshot.val().categories,
         hostId : snapshot.val().host.hostId,
         hostName: snapshot.val().host.hostName,
-        gameState: 'Ready',
+        gameState: 'GetQuestion',
         numTeams: snapshot.val().numTeams
       })
     })
@@ -125,6 +140,7 @@ class GameState extends Component{
         currentQuestion: json.results[0].question,
         answerOptions: answerArray,
         correctAnswer: json.results[0].correct_answer,
+        difficulty: json.results[0].difficulty,
       });
       lobbydata.update({
         RoundData: {
@@ -144,42 +160,48 @@ class GameState extends Component{
 
   pickAnswer = (ans) => {
     var user = firebaseApp.auth().currentUser;
-    var pathArray = window.location.hash.split( '/' );
-    this.state.lobbyID = pathArray[2];
     const database = firebaseApp.database();
-    const teams = database.ref("Lobbies/" + this.state.lobbyID + "/Teams");
-    const round = database.ref("Lobbies/" + this.state.lobbyID + "/Rounds/Round" + this.state.round);
+    const teams = database.ref("Lobbies/" + this.state.lobbyId + "/Teams");
+    const round = database.ref("Lobbies/" + this.state.lobbyId + "/Rounds/Round" + this.state.round);
     const team = round.child('Team' + user.photoURL);
     team.once("value", (snapshot) => {
       if(!(snapshot.exists())){
         team.set({
           answered: true,
           choice: ans,
+          pickedBy: user.uid
         })
         round.once("value", (snapshot) => {
-          console.log("fuck" + snapshot.numChildren());
-          console.log("shit"+ this.props.teams);
-          if(snapshot.numChildren() > (2 + this.state.numTeams)){
+          if(snapshot.numChildren() > (3 + this.state.numTeams)){
             var choices = snapshot.val();
-            console.log(choices);
             for(var i = 1; i < 5; i++){
               var teamN = 'Team' + i;
-              console.log(teamN);
               if(snapshot.child(teamN).exists()){
-                console.log("bnies");
                 if(this.state.correctAnswer == this.state.answerOptions[snapshot.child(teamN).val().choice]){
+                  var questionworth = 0;
+                  switch (this.state.difficulty) {
+                    case 'easy':
+                        questionworth = 1;
+                      break;
+                    case 'medium':
+                        questionworth = 2;
+                      break;
+                    case 'hard':
+                        questionworth = 3;
+                      break;
+                    }
                   const teamscore = teams.child(teamN).child('score');
                   teamscore.transaction(function(score){
-                    return score+1;
+                    return score+questionworth;
                   });
                 }
               }
             }
 
-            const lobbydata = database.ref("Lobbies/" + this.state.lobbyID);
+            const lobbydata = database.ref("Lobbies/" + this.state.lobbyId);
             lobbydata.update({
               RoundData: {
-                GameState: 'Ready',
+                GameState: 'GetQuestion',
                 Round: this.state.round + 1
               }
             })
@@ -191,7 +213,6 @@ class GameState extends Component{
 
   render() {
     var dataloaded;
-
     switch(this.state.gameState){
       case 'Initialize':
         dataloaded = (
@@ -200,25 +221,47 @@ class GameState extends Component{
           </div>
         )
         break;
-      case 'Ready':
+      case 'GetQuestion':
         var user = firebaseApp.auth().currentUser;
+        if(user.uid == this.state.hostId){
+          const database = firebaseApp.database();
+          const round = database.ref("Lobbies/" + this.state.lobbyId + "/CatOptions/");
+          var randCat1 = this.getRandomCategory();
+          var randCat2 = this.getRandomCategory();
+          var randCat3 = this.getRandomCategory();
+          round.update({
+            CategoryOptions: {
+              Cat1: {
+                catid: randCat1.categoryid,
+                name: randCat1. categoryname
+              },
+              Cat2: {
+                catid: randCat2.categoryid,
+                name: randCat2. categoryname
+              },
+              Cat3: {
+                catid: randCat3.categoryid,
+                name: randCat3. categoryname
+              }
+            }
+          })
 
-        var randCat1 = this.getRandomCategory();
-        var randCat2 = this.getRandomCategory();
-        var randCat3 = this.getRandomCategory();
+        }
+        break;
+      case 'Ready':
         dataloaded = (
           <Grid className="AlternativesGrid" width={40} gap={30}>
             <div class="QuestionAlternatives">
               <div>Easy</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(randCat1.categoryid, "easy")}>{randCat1.categoryname}</button>
+              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat1.catid, "easy")}>{this.state.Cat1.name}</button>
             </div>
             <div class="QuestionAlternatives">
             <div>Medium</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(randCat2.categoryid, "medium")}>{randCat2.categoryname}</button>
+              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat2.catid, "medium")}>{this.state.Cat2.name}</button>
             </div>
             <div class="QuestionAlternatives">
               <div>Hard</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(randCat3.categoryid, "hard")}>{randCat3.categoryname}</button>
+              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat3.catid, "hard")}>{this.state.Cat3.name}</button>
             </div>
           </Grid>
         )
@@ -227,24 +270,7 @@ class GameState extends Component{
         dataloaded = (
           <div>
             <div id="question">{this.state.currentQuestion.replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</div>
-            <Grid className="AlternativesGrid" width={40} gap={30}>
-              <div id="column">
-                <div className="QuestionAlternatives">
-                  <button type="button" class="btn btn-primary btn-lg" onClick={() => this.pickAnswer(0)}>{this.state.answerOptions[0].replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</button>
-                </div>
-                <div className="QuestionAlternatives">
-                  <button type="button" class="btn btn-primary btn-lg" onClick={() => this.pickAnswer(1)}>{this.state.answerOptions[1].replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</button>
-                </div>
-              </div>
-              <div id="column">
-                <div className="QuestionAlternatives">
-                  <button type="button" class="btn btn-primary btn-lg" onClick={() => this.pickAnswer(2)}>{this.state.answerOptions[2].replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</button>
-                </div>
-                <div className="QuestionAlternatives">
-                  <button type="button" class="btn btn-primary btn-lg" onClick={() => this.pickAnswer(3)}>{this.state.answerOptions[3].replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</button>
-                </div>
-              </div>
-            </Grid>
+            <AnswerOptionsGrid pickAnswer={ (ans) => this.pickAnswer(ans)} round =  {this.state.round} options = {this.state.answerOptions} lobbyId = {this.state.lobbyId}/>
             <Timer noAnswer={ () => this.noAnswer()}/>
           </div>
         )

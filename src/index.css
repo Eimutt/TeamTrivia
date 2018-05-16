@@ -199,6 +199,13 @@ input:focus{
 	border: solid black 1px;
 }
 
+.QuestionAlternatives2 {
+	margin-top: 50px;
+	padding: 30px;
+	border: solid black 1px;
+	background-color: Yellow;
+}
+
 .AlternativesGrid {
 	margin: 10%;
 }
