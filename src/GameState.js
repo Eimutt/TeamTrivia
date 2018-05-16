@@ -148,7 +148,7 @@ class GameState extends Component{
   }
 
   handleFetchClick = (catID, difficulty) => {
-    if(this.user.photoURL != null){
+    if(this.user.photoURL != '0'){
       var pathArray = window.location.hash.split( '/' );
       const database = firebaseApp.database();
       const lobbydata = database.ref("Lobbies/" + pathArray[2]);
@@ -189,7 +189,7 @@ class GameState extends Component{
 
 
   pickAnswer = (ans) => {
-    if(this.user.photoURL != null){
+    if(this.user.photoURL != '0'){
       const database = firebaseApp.database();
       const teams = database.ref("Lobbies/" + this.state.lobbyId + "/Teams");
       const round = database.ref("Lobbies/" + this.state.lobbyId + "/Rounds/Round" + this.state.round);

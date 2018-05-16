@@ -37,7 +37,7 @@ class Team extends Component{
     user.updateProfile({
       photoURL: this.props.teamid
     }).then(function() {
-      console.log("Suge en benis");
+      
     }, function(error) {
       // An error happened.
     });
