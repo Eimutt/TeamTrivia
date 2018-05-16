@@ -35,8 +35,13 @@ class Team extends Component{
     }
 
     user.updateProfile({
-      photoURL: this.Id, //we couldn't use a fitting field in the user so we chose to put current team in photoURL
+      photoURL: this.props.teamid
+    }).then(function() {
+      console.log("Suge en benis");
+    }, function(error) {
+      // An error happened.
     });
+
     //console.log(members.path);
     members.push({
       id: user.uid,
