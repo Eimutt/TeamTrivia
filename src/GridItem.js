@@ -6,8 +6,8 @@ class GridItem extends Component {
     super(props);
   }
 
-  handleClick(categoryid, categoryname) {
-    this.props.callback(categoryid, categoryname);
+  handleClick = (categoryid, categoryname) => {
+    this.props.callback1(categoryid, categoryname);
   }
 
   render() {

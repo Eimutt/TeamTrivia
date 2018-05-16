@@ -6,7 +6,6 @@ import GridItem from "./GridItem";
 class Categories extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     //this.props.model.addObserver(this);
     // We create the state to store the various statuses
     // e.g. API data loading or error
@@ -19,7 +18,6 @@ class Categories extends React.Component {
 
   componentDidMount() {
     this.fetchCategories().then((json) => {
-      console.log(json);
       this.setState({
         categories: json.trivia_categories,
         status: "ready"
@@ -51,7 +49,7 @@ class Categories extends React.Component {
     }
   }
 
-  handleClick(categoryid, categoryname) {
+  handleClick = (categoryid, categoryname) => {
     this.props.callback(categoryid, categoryname);
   }
 
@@ -85,14 +83,13 @@ class Categories extends React.Component {
               {rows.map((row) =>
                 <Row>
                   {row.map((currentcategory) =>
-                    <GridItem category={currentcategory} callback={this.handleClick}/>
+                    <GridItem category={currentcategory} callback1={this.handleClick}/>
                   )}
                 </Row>
               )}
             </Container>
           </div>
         );
-        console.log(rows);
         break;
     }
     /*<Col sm={3} className="griditem">

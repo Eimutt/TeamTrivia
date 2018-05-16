@@ -106,7 +106,7 @@ class GameSetup extends React.Component {
       <div className="Lobby">
         <div className="GameOptions">
           Game setup
-          <div className = "buttonConatiner">
+          <div className = "buttonContainer">
             <div>Number of Questions:</div>
             <input id="numberOfQuestions" type="number" min="1" input="number" value={this.state.numberOfQuestions} onChange={this.onNumberOfGuestsChanged}></input>
           </div>
