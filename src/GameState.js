@@ -19,10 +19,7 @@ class GameState extends Component{
       categories: [],
       status: 'Initialize',
       gameState: 'Initialize',
-      currentQuestion: "",
-      answerOptions: [],
-      correctAnswer: "",
-      difficulty: "",
+      questioninfo: {},
       round: 0,
       Cat1: {},
       Cat2: {},
@@ -45,12 +42,13 @@ class GameState extends Component{
       if (snapshot.numChildren() > 0){
         var data = snapshot.val()["Round" + this.state.round];
         this.setState({
-          currentQuestion: data.currentQuestion,
-          answerOptions: data.answerOptions,
-          correctAnswer: data.correctAnswer,
-          difficulty: data.difficulty,
+          questioninfo: {
+            currentQuestion: data.currentQuestion,
+            answerOptions: data.answerOptions,
+            correctAnswer: data.correctAnswer,
+            difficulty: data.difficulty
+          },
           gameState: 'QuestionMode',
-
         })
       }
     })
@@ -161,17 +159,20 @@ class GameState extends Component{
         var temp = answerArray[3];
         answerArray[3] = answerArray[randIndex];
         answerArray[randIndex] = temp;
-        /*this.setState ({
-          currentQuestion: json.results[0].question,
-          answerOptions: answerArray,
-          correctAnswer: json.results[0].correct_answer,
-          status: 'QuestionMode'
-        });*/
+        var difficulty = 1;
+        switch (json.results[0].difficulty) {
+          case 'medium':
+            difficulty = 2;
+            break;
+          case 'hard':
+            difficulty = 3;
+            break;
+        }
         lobbydata.child("Rounds").child("Round" + this.state.round).set({
           currentQuestion: json.results[0].question,
           answerOptions: answerArray,
           correctAnswer: json.results[0].correct_answer,
-          difficulty: json.results[0].difficulty,
+          difficulty: difficulty,
         });
         lobbydata.update({
           RoundData: {
@@ -208,19 +209,8 @@ class GameState extends Component{
               for(var i = 1; i < 5; i++){
                 var teamN = 'Team' + i;
                 if(snapshot.child(teamN).exists()){
-                  if(this.state.correctAnswer == this.state.answerOptions[snapshot.child(teamN).val().choice]){
-                    var questionworth = 0;
-                    switch (this.state.difficulty) {
-                      case 'easy':
-                          questionworth = 1;
-                        break;
-                      case 'medium':
-                          questionworth = 2;
-                        break;
-                      case 'hard':
-                          questionworth = 3;
-                        break;
-                      }
+                  if(this.state.questioninfo.correctAnswer == this.state.questioninfo.answerOptions[snapshot.child(teamN).val().choice]){
+                    var questionworth = this.state.questioninfo.difficulty;
                     const teamscore = teams.child(teamN).child('score');
                     teamscore.transaction(function(score){
                       return score+questionworth;
@@ -232,8 +222,8 @@ class GameState extends Component{
               const lobbydata = database.ref("Lobbies/" + this.state.lobbyId);
               lobbydata.update({
                 RoundData: {
-                  GameState: 'GetQuestion',
-                  Round: this.state.round + 1
+                  GameState: 'RoundResults',
+                  Round: this.state.round
                 }
               })
             }
@@ -265,15 +255,15 @@ class GameState extends Component{
           <Grid className="AlternativesGrid" width={40} gap={30}>
             <div class="QuestionAlternatives">
               <div>Easy</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat1.catid, "easy")}>{this.state.Cat1.name}</button>
+              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat1.catid, "easy")}>{this.state.Cat1.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
             </div>
             <div class="QuestionAlternatives">
             <div>Medium</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat2.catid, "medium")}>{this.state.Cat2.name}</button>
+              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat2.catid, "medium")}>{this.state.Cat2.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
             </div>
             <div class="QuestionAlternatives">
               <div>Hard</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat3.catid, "hard")}>{this.state.Cat3.name}</button>
+              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat3.catid, "hard")}>{this.state.Cat3.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
             </div>
           </Grid>
         )
@@ -281,8 +271,8 @@ class GameState extends Component{
       case 'QuestionMode':
         dataloaded = (
           <div>
-            <div id="question">{this.state.currentQuestion.replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</div>
-            <AnswerOptionsGrid pickAnswer={ (ans) => this.pickAnswer(ans)} round =  {this.state.round} options = {this.state.answerOptions} lobbyId = {this.state.lobbyId}/>
+            <div id="question">{this.state.questioninfo.currentQuestion.replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</div>
+            <AnswerOptionsGrid pickAnswer={ (ans) => this.pickAnswer(ans)} round =  {this.state.round} options = {this.state.questioninfo.answerOptions} lobbyId = {this.state.lobbyId}/>
             <Timer noAnswer={ () => this.noAnswer()}/>
           </div>
         )
@@ -290,13 +280,14 @@ class GameState extends Component{
       case 'RoundResults':
         dataloaded = (
           <div>
-            <RoundResults/>
+            <RoundResults questioninfo={this.state.questioninfo} round =  {this.state.round} lobbyId = {this.state.lobbyId}/>
           </div>
         )
         break;
     }
     return (
       <div>
+        {"Round " + (this.state.round + 1)}
         {dataloaded}
         <ScoreBoard/>
       </div>

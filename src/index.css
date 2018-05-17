@@ -258,3 +258,15 @@ input:focus{
 	margin: 40px;
 	font-size: 2em;
 }
+
+.CorrectAnswer {
+	background-color: Green;
+}
+
+.WrongAnswer {
+	background-color: red;
+}
+
+ul {
+	list-style-type: none;
+}

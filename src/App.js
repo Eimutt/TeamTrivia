@@ -42,27 +42,6 @@ class App extends Component {
 
 
   componentDidMount() {
-    const database = firebaseApp.database();
-    database.ref("Lobby").child("Team").child("member").on("value", (value) => {
-      //console.log(value.val());
-      var json = value.val();
-      var benis = [];
-      for (var key in json) {
-        if (json.hasOwnProperty(key)) {
-          //console.log(key + " -> " + json[key]);
-          var temp = [];
-          temp.push(json[key].id);
-          temp.push(json[key].name);
-          temp.push(json[key].points);
-          benis.push(temp);
-        }
-      }
-      //console.log(benis);
-      this.setState({
-        data: benis
-      })
-    })
-
     firebaseApp.auth().signInAnonymously().catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
@@ -71,15 +50,21 @@ class App extends Component {
     });
     firebaseApp.auth().onAuthStateChanged(function(user) {
       if (user) {
-        var isAnonymous = user.isAnonymous;
-        var uid = user.uid;
-        console.log(user);
-        // ...
+        user.updateProfile({
+          displayName: null,
+          photoURL: '0'
+        }).then(function() {
+          // Profile updated successfully!
+          // "Jane Q. User"
+          // "https://example.com/jane-q-user/profile.jpg"
+          var photoURL = user.photoURL;
+        }, function(error) {
+          // An error happened.
+        });
       } else {
         // User is signed out.
         // ...
       }
-      // ...
     });
 
 
