@@ -12,7 +12,7 @@ class GridItem extends Component {
 
   render() {
     return (
-      <Col sm={3} className="griditem">
+      <Col md={3} className="griditem">
         <div className="categoryname">{this.props.category.name.replace("Entertainment: ", "").replace("Science: ", "")}</div>
         <label class="switch">
           <input type="checkbox" onClick={() => this.handleClick(this.props.category.id, this.props.category.name)}></input>

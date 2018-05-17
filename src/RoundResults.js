@@ -37,13 +37,16 @@ class RoundResults extends Component {
       choices: choices,
       status: 'Ready'
     });
+
+    setTimeout(() => {
+      this.props.newRound();
+    }, 5000);
   }
 
   componentWillUnmount() {
   }
 
   render() {
-    console.log(this.state);
     var results;
     switch (this.state.status) {
       case 'Initial':
@@ -68,7 +71,6 @@ class RoundResults extends Component {
         break;
     }
 
-    console.log(results);
     return (
       <div>
         <div id="question">{this.props.questioninfo.currentQuestion.replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
-import Grid from 'react-css-grid';
+import {Col, Container, Row} from 'react-grid-system';
 import ScoreBoard from './ScoreBoard';
 import Timer from './Timer';
 import AnswerOptionsGrid from './AnswerOptionsGrid';
@@ -233,6 +233,18 @@ class GameState extends Component{
     }
   }
 
+  newRound = () => {
+    const database = firebaseApp.database();
+    const lobbydata = database.ref("Lobbies/" + this.state.lobbyId);
+    lobbydata.update({
+      RoundData: {
+        GameState: 'GetQuestion',
+        Round: this.state.round + 1
+      }
+    })
+  }
+
+
   render() {
     console.log(this.state.gameState);
     var dataloaded;
@@ -252,20 +264,22 @@ class GameState extends Component{
         break;
       case 'Ready':
         dataloaded = (
-          <Grid className="AlternativesGrid" width={40} gap={30}>
-            <div class="QuestionAlternatives">
-              <div>Easy</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat1.catid, "easy")}>{this.state.Cat1.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
-            </div>
-            <div class="QuestionAlternatives">
-            <div>Medium</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat2.catid, "medium")}>{this.state.Cat2.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
-            </div>
-            <div class="QuestionAlternatives">
-              <div>Hard</div>
-              <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat3.catid, "hard")}>{this.state.Cat3.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
-            </div>
-          </Grid>
+          <Container className="AlternativesGrid">
+              <Row>
+                <Col md={4} class="QuestionAlternatives">
+                  <div>Easy</div>
+                  <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat1.catid, "easy")}>{this.state.Cat1.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
+                </Col>
+                <Col md={4} class="QuestionAlternatives">
+                  <div>Medium</div>
+                  <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat2.catid, "medium")}>{this.state.Cat2.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
+                </Col>
+                <Col md={4} class="QuestionAlternatives">
+                  <div>Hard</div>
+                  <button type="button" class="btn btn-primary btn-lg" onClick={() => this.handleFetchClick(this.state.Cat3.catid, "hard")}>{this.state.Cat3.name.replace("Entertainment: ", "").replace("Science: ", "")}</button>
+                </Col>
+              </Row>
+          </Container>
         )
         break;
       case 'QuestionMode':
@@ -280,7 +294,7 @@ class GameState extends Component{
       case 'RoundResults':
         dataloaded = (
           <div>
-            <RoundResults questioninfo={this.state.questioninfo} round =  {this.state.round} lobbyId = {this.state.lobbyId}/>
+            <RoundResults newRound={() => this.newRound()} questioninfo={this.state.questioninfo} round =  {this.state.round} lobbyId = {this.state.lobbyId}/>
           </div>
         )
         break;
