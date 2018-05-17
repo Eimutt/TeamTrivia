@@ -15,7 +15,7 @@ class GameState extends Component{
     this.state = {
       members: [],
       lobbyId: "",
-      numberOfQuestions: "",
+      numQ: "",
       categories: [],
       status: 'Initialize',
       gameState: 'Initialize',
@@ -117,7 +117,7 @@ class GameState extends Component{
           catid: randCat3.id,
           name: randCat3.name
         },
-        round: this.state.round
+        round: this.state.round,
       }
     })
   }
@@ -234,14 +234,20 @@ class GameState extends Component{
   }
 
   newRound = () => {
-    const database = firebaseApp.database();
-    const lobbydata = database.ref("Lobbies/" + this.state.lobbyId);
-    lobbydata.update({
-      RoundData: {
-        GameState: 'GetQuestion',
-        Round: this.state.round + 1
+    if(this.user.uid == this.state.hostId){
+      const database = firebaseApp.database();
+      const lobbydata = database.ref("Lobbies/" + this.state.lobbyId);
+      lobbydata.update({
+        RoundData: {
+          GameState: 'GetQuestion',
+          Round: this.state.round + 1
+        }
+      })
+      console.log(this.state.round + " > " + this.state.numQ);
+      if (this.state.round >= this.state.numQ) {
+        this.props.endGame();
       }
-    })
+    }
   }
 
 

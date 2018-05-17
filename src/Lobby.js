@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import Grid from 'react-css-grid';
 import GameState from "./GameState";
-import TeamSetup from "./TeamSetup"
+import TeamSetup from "./TeamSetup";
+import VictoryScreen from "./VictoryScreen";
 
 class Lobby extends Component {
   constructor(props) {
@@ -18,7 +19,8 @@ class Lobby extends Component {
       lobbyId: "",
       hostId: "",
       hostName: "",
-      numTeams: 0
+      numTeams: 0,
+      finalScores: [],
     }
   }
 
@@ -73,6 +75,29 @@ class Lobby extends Component {
     })
   }
 
+  endGame = () => {
+    const database = firebaseApp.database();
+    const lobby = database.ref("Lobbies/" + this.state.lobbyId);
+    const teams = database.ref("Lobbies/" + this.state.lobbyId + "/Teams/");
+    var id = this.state.lobbyId;
+    var teamScores = [];
+    teams.once("value", (snapshot) => {
+      var data = snapshot.val();
+      console.log(data);
+      Object.keys(data).map(function(objectKey, index) {
+          //var t = data[objectKey];
+          console.log(objectKey);
+          console.log(id);
+          console.log("Lobbies/" + id + "/Teams/" + objectKey);
+          teamScores.push({teamNum: objectKey, teamInfo: data[objectKey]});
+      });
+    })
+    this.setState({
+      status : "GameEnded",
+      finalScores : teamScores,
+    })
+  }
+
   render() {
     var lobbyView;
     switch(this.state.status){
@@ -118,8 +143,13 @@ class Lobby extends Component {
       case 'InProgress':
         lobbyView = (
           <div>
-            <GameState teams={this.state.numTeams}/>
+            <GameState teams={this.state.numTeams} endGame={() => this.endGame()}/>
           </div>
+        )
+        break;
+      case 'GameEnded':
+        lobbyView = (
+          <VictoryScreen finalScores={this.state.finalScores}/>
         )
         break;
     }
