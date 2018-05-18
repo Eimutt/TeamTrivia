@@ -78,17 +78,17 @@ class GameSetup extends React.Component {
   }
 
   isPositiveInteger = (n) => {
-    return n >>> 1 === parseFloat(n);
+    if (n == 0)
+      return false;
+    return n >>> 0 === parseFloat(n);
   }
 
   render() {
-    console.log(this.isPositiveInteger(this.state.numberOfQuestions) || this.state.currentcategories.length == 0);
-    console.log(this.isPositiveInteger(this.state.numberOfQuestions));
-    console.log(this.state.currentcategories.length == 0);
+    console.log("is ok" + (this.isPositiveInteger(this.state.numberOfQuestions) && this.state.currentcategories.length > 0));
     var confirmButton;
     confirmButton = (
       <div class="btnhandler">
-        <button id="startbutton" disabled={this.isPositiveInteger(this.state.numberOfQuestions) || this.state.currentcategories.length == 0} type="button" class="btn btn-primary btn-lg" onClick={() => this.handleChange()}>Create Lobby</button>
+        <button id="startbutton" disabled={!(this.isPositiveInteger(this.state.numberOfQuestions) && this.state.currentcategories.length > 0)} type="button" class="btn btn-primary btn-lg" onClick={() => this.handleChange()}>Create Lobby</button>
       </div>
     )
 
