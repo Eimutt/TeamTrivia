@@ -10,13 +10,16 @@ class NameInput extends React.Component {
     super(props)
     this.state = {
       name: '',
+      status: '',
     }
     this.handleChange = this.handleChange.bind(this);
   }
 
 
   handleChange = (e) => {
-    this.state.name = e.target.value;
+    this.setState({
+      name : e.target.value,
+    })
   }
 
   confirmName(){
@@ -24,36 +27,15 @@ class NameInput extends React.Component {
   }
 
   componentDidMount() {
-    const database = firebaseApp.database();
-    database.ref("Lobby").child("Team").child("member").on("value", (value) => {
-      //console.log(value.val());
-      var json = value.val();
-      var benis = [];
-      for (var key in json) {
-        if (json.hasOwnProperty(key)) {
-          //console.log(key + " -> " + json[key]);
-          var temp = [];
-          temp.push(json[key].id);
-          temp.push(json[key].name);
-          temp.push(json[key].points);
-          benis.push(temp);
-        }
-      }
-      //console.log(benis);
-      this.setState({
-        data: benis
-      })
-    })
+
   }
 
   render() {
-
-
     return (
       <div className="App">
-        <input className="NameInput" type="text" placeholder="Enter Name..."  onChange={this.handleChange}></input>
+        <input className="NameInput" type="text" placeholder="Enter Name..." maxlength="8" onChange={this.handleChange}></input>
         <div>
-          <button type="button" class="btn btn-primary btn-sm" onClick={() => this.confirmName()}>
+          <button type="button" class="btn btn-primary btn-sm" disabled={this.state.name === ""} onClick={() => this.confirmName()}>
             Confirm
           </button>
         </div>
