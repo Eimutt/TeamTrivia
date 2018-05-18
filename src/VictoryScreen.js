@@ -37,22 +37,22 @@ class VictoryScreen extends Component {
         results = (
           <div>
             <Container id="EndGameContainer">
-             <Row>
-              <Col md={4}></Col>
-              <Col md={4} id="EndGameTeam">{"Winner!"}</Col>
-              <Col md={4}></Col>
-             </Row>
               {this.state.sortedTeamList.map((team) =>
                 <Row>
                   <Col md={4}></Col>
-                  <Col md={4} id="EndGameTeam">
-                    <div>{team.teamNum}</div>
-                    <div>{"Score: " + team.teamInfo.score}</div>
-                    <div>
-                      <div>{"Members: "}</div>
-                      {Object.keys(team.teamInfo.members).map((key) =>
-                        <div>{team.teamInfo.members[key].name}</div>
-                      )}
+                  <Col md={4} id="EndGameTeamContainer">
+                    <div id="EndGamePlacement">
+                      {"Winner!"}
+                    </div>
+                    <div id="EndGameTeam">
+                      <div>{team.teamNum}</div>
+                      <div>{"Score: " + team.teamInfo.score}</div>
+                      <div>
+                        <div>{"Members: "}</div>
+                        {Object.keys(team.teamInfo.members).map((key) =>
+                          <div>{team.teamInfo.members[key].name}</div>
+                        )}
+                      </div>
                     </div>
                   </Col>
                   <Col md={4}></Col>
@@ -67,22 +67,21 @@ class VictoryScreen extends Component {
           <div>
             <Container id="EndGameContainer">
               <Row>
-               <Col md={2}></Col>
-               <Col md={4} id="EndGameTeam">{"Winner!"}</Col>
-               <Col md={4} id="EndGameTeam">{"Second place"}</Col>
-               <Col md={2}></Col>
-              </Row>
-              <Row>
                 <Col md={2}></Col>
-                {this.state.sortedTeamList.map((team) =>
-                  <Col md={4} id="EndGameTeam">
-                    <div>{team.teamNum}</div>
-                    <div>{"Score: " + team.teamInfo.score}</div>
-                    <div>
-                      <div>{"Members: "}</div>
-                      {Object.keys(team.teamInfo.members).map((key) =>
-                        <div>{team.teamInfo.members[key].name}</div>
-                      )}
+                {this.state.sortedTeamList.map((team, index) =>
+                  <Col md={4} id="EndGameTeamContainer">
+                    <div id="EndGamePlacement">
+                      {index === 0 ? "Winner!" : "Second"}
+                    </div>
+                    <div id="EndGameTeam">
+                      <div>{team.teamNum}</div>
+                      <div>{"Score: " + team.teamInfo.score}</div>
+                      <div>
+                        <div>{"Members: "}</div>
+                        {Object.keys(team.teamInfo.members).map((key) =>
+                          <div>{team.teamInfo.members[key].name}</div>
+                        )}
+                      </div>
                     </div>
                   </Col>
                 )}
@@ -100,7 +99,9 @@ class VictoryScreen extends Component {
                 <Col md={1.5}></Col>
                 {this.state.sortedTeamList.map((team, index) =>
                   <Col md={3} id="EndGameTeamContainer">
-                    <div id="EndGamePlacement">{index === 0 ? "Winner!" : index === 1 ? "Second" : "Third"}</div>
+                    <div id="EndGamePlacement">
+                      {index === 0 ? "Winner!" : index === 1 ? "Second" : "Third"}
+                    </div>
                     <div id="EndGameTeam">
                       <div>{team.teamNum}</div>
                       <div>{"Score: " + team.teamInfo.score}</div>
@@ -124,21 +125,20 @@ class VictoryScreen extends Component {
           <div>
             <Container id="EndGameContainer">
               <Row>
-               <Col md={3} id="EndGameTeam">{"Winner!"}</Col>
-               <Col md={3} id="EndGameTeam">{"Second place"}</Col>
-               <Col md={3} id="EndGameTeam">{"Third place"}</Col>
-               <Col md={3} id="EndGameTeam">{"Fourth place"}</Col>
-              </Row>
-              <Row>
-                {this.state.sortedTeamList.map((team) =>
-                  <Col md={3} id="EndGameTeam">
-                    <div>{team.teamNum}</div>
-                    <div>{"Score: " + team.teamInfo.score}</div>
-                    <div>
-                      <div>{"Members: "}</div>
-                      {Object.keys(team.teamInfo.members).map((key) =>
-                        <div>{team.teamInfo.members[key].name}</div>
-                      )}
+                {this.state.sortedTeamList.map((team, index) =>
+                  <Col md={3} id="EndGameTeamContainer">
+                    <div id="EndGamePlacement">
+                      {index === 0 ? "Winner!" : index === 1 ? "Second" : index === 2 ? "Third" :"Fourth"}
+                    </div>
+                    <div id="EndGameTeam">
+                      <div>{team.teamNum}</div>
+                      <div>{"Score: " + team.teamInfo.score}</div>
+                      <div>
+                        <div>{"Members: "}</div>
+                        {Object.keys(team.teamInfo.members).map((key) =>
+                          <div>{team.teamInfo.members[key].name}</div>
+                        )}
+                      </div>
                     </div>
                   </Col>
                 )}
