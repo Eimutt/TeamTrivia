@@ -6,14 +6,9 @@ import {Col, Container, Row} from 'react-grid-system';
 class VictoryScreen extends Component {
   constructor(props) {
     super(props);
-    //this.props.model.addObserver(this);
-    // We create the state to store the various statuses
-    // e.g. API data loading or error
     this.state = {
       sortedTeamList: [],
-
     }
-    console.log(this);
   }
 
   compare = (a,b) => {
@@ -147,7 +142,6 @@ class VictoryScreen extends Component {
           </div>
         )
         break;
-
     }
     return (
       <div>
