@@ -257,33 +257,6 @@ class GameState extends Component{
     }
   }
 
-  removefromTeam = () => {
-    var user = this.user;
-    if(this.user.photoURL != 0){
-      const database = firebaseApp.database();
-      const lobby = database.ref("Lobbies/" + this.state.lobbyId);
-      const teamdata = database.ref("Lobbies/" + this.state.lobbyId + "/Teams/Team" + user.photoURL);
-      console.log("Lobbies/" + this.state.lobbyId + "/Teams/Team" + user.photoURL + "/members")
-
-      teamdata.once("value", (snapshot) => {
-        var members = snapshot.child("members").val();
-        Object.keys(members).map(function(objectKey, index) {
-            if(members[objectKey].id == user.uid){
-              teamdata.child("members").child(objectKey).remove();
-            }
-        });
-        console.log(snapshot.child("members").numChildren());
-        if (snapshot.child("members").numChildren() == 1){
-          teamdata.remove();
-          lobby.child("numTeams").transaction(function(numTeams){
-            return numTeams-1;
-          });
-        }
-      })
-    }
-  }
-
-
   render() {
     console.log(this.state.gameState);
     var dataloaded;

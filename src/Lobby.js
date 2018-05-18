@@ -200,7 +200,7 @@ class Lobby extends Component {
       const lobby = database.ref("Lobbies/" + this.state.lobbyId);
       var teamexists = false;
       lobby.on("value", (snapshot) => {
-        if(snapshot.numChildren() > 4)
+        if(snapshot.child("Teams").exists())
           teamexists = true;
       })
       console.log(teamexists);
