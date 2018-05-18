@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import GridItem from "./GridItem";
 import {Col, Container, Row} from 'react-grid-system';
@@ -12,7 +12,7 @@ class GameSetup extends React.Component {
     this.state = {
       numberOfQuestions: 10,
       currentcategories: [],
-      lobbyID: ""
+      lobbyID: "",
     }
   }
 
@@ -38,6 +38,7 @@ class GameSetup extends React.Component {
       categories: this.state.currentcategories,
       status: "INITIAL"
     });
+    this.props.history.push("/lobby/" + newLobID);
   }
 
   onNumberOfGuestsChanged = (e) => {
@@ -78,14 +79,6 @@ class GameSetup extends React.Component {
 
   render() {
     console.log("Current categories: " + JSON.stringify(this.state.currentcategories));
-    var toPrintLink = "";
-    if(this.state.lobbyID !== "")
-      toPrintLink = (
-        <div className="gameLink">
-          <div>Here is your game link, give it to your friends and then click on it</div>
-          <Link to = {"/lobby/" + this.state.lobbyID}>{window.location + "lobby/" + this.state.lobbyID}</Link>
-        </div>
-      )
     var confirmButton = "";
     //console.log("Number of total categories: " + this.state.categories.length);
     console.log("Number of current categories: " + this.state.currentcategories.length);
@@ -113,10 +106,9 @@ class GameSetup extends React.Component {
           <Categories callback={this.addCategory}/>
         </div>
         {confirmButton}
-        {toPrintLink}
       </div>
     );
   }
 }
 
-export default GameSetup;
+export default withRouter(GameSetup);
