@@ -34,9 +34,11 @@ class Lobby extends Component {
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
     console.log(pathArray[2]);
+    this.setState({
+      lobbyId : pathArray[2],
+    })
     lobbydata.on("value", (snapshot) => {
       this.setState({
-        lobbyId : pathArray[2],
         numQ : snapshot.val().numberOfQuestions,
         categories : snapshot.val().categories,
         hostId : snapshot.val().host.hostId,
@@ -244,14 +246,16 @@ class Lobby extends Component {
         break;
       case 'GameEnded':
         lobbyView = (
-          <VictoryScreen finalScores={this.state.finalScores}/>
+          <div>
+            <VictoryScreen finalScores={this.state.finalScores}/>
+          </div>
         )
         break;
     }
     return (
       <div>
         {lobbyView}
-        <Chat lobbyId = {this.state.lobbyId}/>
+        <Chat lobbyId={this.state.lobbyId}/>
       </div>
     );
   }
