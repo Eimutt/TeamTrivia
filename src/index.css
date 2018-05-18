@@ -153,8 +153,8 @@ ol {
 
 .CategoryContainer {
 	margin-top: 20px;
-	margin-left: 10%;
-	margin-right: 10%;
+	margin-left: 20%;
+	margin-right: 20%;
 	border: black solid 1px;
 	background-color: #4a4242;
 	color: white;
@@ -372,7 +372,7 @@ ul {
 }
 
 .chat {
-	position: absolute;
+	position: fixed;
 	bottom: 0px;
 	left: 0px;
 	z-index: 1;
@@ -403,6 +403,10 @@ ul {
 
 .divRow2 div {
 	display: inline-block;
+}
+
+.chatToggle {
+	display: none;
 }
 
 
@@ -475,7 +479,7 @@ ul {
 	}
 
 	.chat {
-		position: absolute;
+		position: fixed;
 		bottom: 0px;
 		left: 0px;
 		z-index: 1;
@@ -496,4 +500,10 @@ ul {
 		display: inline-block;
 	}
 
+	.chatToggle {
+		display: inline;
+		position: fixed;
+		bottom: 0px;
+		right: 0px;
+	}
 }

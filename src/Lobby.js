@@ -24,6 +24,7 @@ class Lobby extends Component {
       hostName: "",
       numTeams: 0,
       finalScores: [],
+      showchat: false
     }
   }
 
@@ -141,16 +142,8 @@ class Lobby extends Component {
         status : "GameEnded",
         finalScores : teamScores,
     })
-    /*
-    this.setState({
-      status : "GameEnded",
-      finalScores : teamScores,
-    })*/
   }
 
-  fug = () => {
-    console.log('xd');
-  }
 
 
 
@@ -179,6 +172,19 @@ class Lobby extends Component {
         }
       })
     }
+  }
+
+  togglechat = () => {
+    if(this.state.showchat == false){
+      this.setState({
+        showchat: true
+      })
+    } else {
+      this.setState({
+        showchat: false
+      })
+    }
+    console.log("#Xdeadxaedad");
   }
 
 
@@ -255,7 +261,16 @@ class Lobby extends Component {
     return (
       <div>
         {lobbyView}
-        <Chat lobbyId={this.state.lobbyId}/>
+        <div className="chatToggle">
+          <div class="btnhandler">
+            <button id="chatToggle" type="button" class="btn btn-primary btn-lg" onClick={() => this.togglechat()}>togglechat</button>
+          </div>
+        </div>
+        {this.state.showchat ?
+          <Chat lobbyId={this.state.lobbyId}/>
+          :
+          <div></div>
+        }
       </div>
     );
   }
