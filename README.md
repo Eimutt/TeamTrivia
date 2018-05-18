@@ -50,6 +50,10 @@ ScoreBoard.js: Used by GameState.js. Responsible for the logic and rendering of 
 
 SpectatorWarning.js: Used by Lobby.js. Responsible for the logic and rendering of a warning message to spectators telling them that they are spectators.
 
-Team.js: Handles the structure and data of teams.
+Team.js: Used by TeamSetup.js. Responsible for the logic of joining and changing teams as well as the rendering of the teams.
 
-TeamSetup.js: Used by Lobby.js. Responsible for the logic of joining and changing teams and rendering of the table of the 4 teams.
+TeamSetup.js: Used by Lobby.js. Responsible for the logic and rendering of the table of the 4 teams.
+
+Timer.js: Used by GameState.js. Responsible for the logic and rendering of the ticking down timer during gameplay.
+
+VictoryScreen.js: Used by Lobby.js. Responsible for the logic and rendering of the endgame results.
