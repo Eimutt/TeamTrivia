@@ -15,7 +15,6 @@ class NameInput extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-
   handleChange = (e) => {
     this.setState({
       name : e.target.value,

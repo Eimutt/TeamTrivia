@@ -11,7 +11,6 @@ class MessageBox extends Component {
     }
   }
 
-
   componentDidMount() {
     var lobbyId = window.location.hash.split( '/' )[2];
     const database = firebaseApp.database();
@@ -27,9 +26,7 @@ class MessageBox extends Component {
   }
 
   render() {
-
     var messages;
-
     switch (this.state.status) {
       case 'Initial':
 

@@ -11,7 +11,6 @@ class ChatInput extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-
   handleChange = (e) => {
     this.setState({
       text: e.target.value
@@ -19,7 +18,6 @@ class ChatInput extends Component {
   }
 
   sendMessage(){
-    console.log(this.props);
     const database = firebaseApp.database();
     const messages = database.ref("Lobbies/" + this.props.lobbyId + "/messages");
     messages.push({
@@ -34,13 +32,10 @@ class ChatInput extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
     this.user = firebaseApp.auth().currentUser;
   }
 
   render() {
-
-
     return (
       <div className="divRow">
         <div>

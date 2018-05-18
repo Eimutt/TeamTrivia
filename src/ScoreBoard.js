@@ -45,8 +45,6 @@ class ScoreBoard extends Component {
           </div>
         )
     }
-
-
     return (
       <div className ="ScoreBoard">
         <div>ScoreBoard</div>
