@@ -39,7 +39,7 @@ class GameSetup extends React.Component {
     this.props.history.push("/lobby/" + newLobID);
   }
 
-  onNumberOfGuestsChanged = (e) => {
+  onNumberOfQuestionsChanged = (e) => {
     this.setState({
       numberOfQuestions: e.target.value,
     })
@@ -85,7 +85,7 @@ class GameSetup extends React.Component {
           Game setup
           <div className = "buttonContainer">
             <div>Number of Questions:</div>
-            <input id="numberOfQuestions" type="number" min="1" input="number" value={this.state.numberOfQuestions} onChange={this.onNumberOfGuestsChanged}></input>
+            <input id="numberOfQuestions" type="number" min="1" input="number" value={this.state.numberOfQuestions} onChange={this.onNumberOfQuestionsChanged}></input>
           </div>
           <Categories callback={this.addCategory}/>
         </div>
