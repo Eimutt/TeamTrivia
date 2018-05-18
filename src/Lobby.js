@@ -7,6 +7,7 @@ import TeamSetup from "./TeamSetup";
 import VictoryScreen from "./VictoryScreen";
 import Beforeunload from 'react-beforeunload';
 import SpectatorWarning from "./SpectatorWarning";
+import Chat from "./Chat";
 
 class Lobby extends Component {
   constructor(props) {
@@ -250,6 +251,7 @@ class Lobby extends Component {
     return (
       <div>
         {lobbyView}
+        <Chat lobbyId = {this.state.lobbyId}/>
       </div>
     );
   }
