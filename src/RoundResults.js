@@ -6,10 +6,6 @@ import Grid from 'react-css-grid';
 class RoundResults extends Component {
   constructor(props) {
     super(props);
-    //this.props.model.addObserver(this);
-    // We create the state to store the various statuses
-    // e.g. API data loading or error
-    console.log(this.props);
     this.state = {
       answerOptions : this.props.questioninfo.answerOptions,
       round: this.props.round,
@@ -22,7 +18,6 @@ class RoundResults extends Component {
   componentDidMount() {
     const database = firebaseApp.database();
     const teamAns = database.ref("Lobbies/" + this.state.lobbyId + "/Rounds/Round" + this.state.round);
-    console.log("Lobbies/" + this.state.lobbyId + "/Rounds/Round" + this.state.round);
     var choices = {};
     teamAns.once("value", (snapshot) => {
       var data = snapshot.val();
@@ -37,7 +32,6 @@ class RoundResults extends Component {
       choices: choices,
       status: 'Ready'
     });
-
     setTimeout(() => {
       this.props.newRound();
     }, 5000);
@@ -70,7 +64,6 @@ class RoundResults extends Component {
           </ul>
         break;
     }
-
     return (
       <div>
         <div id="question">{this.props.questioninfo.currentQuestion.replace(/&quot;/g,"\"").replace(/&#039;/g, "'")}</div>

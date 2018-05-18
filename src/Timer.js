@@ -6,9 +6,6 @@ import Grid from 'react-css-grid';
 class Timer extends Component {
   constructor(props) {
     super(props);
-    //this.props.model.addObserver(this);
-    // We create the state to store the various statuses
-    // e.g. API data loading or error
     this.state = {
       timer: 30
     }

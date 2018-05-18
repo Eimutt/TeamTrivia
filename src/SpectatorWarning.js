@@ -17,15 +17,13 @@ class SpectatorWarning extends Component {
   render() {
     var user = firebaseApp.auth().currentUser;
     var warning;
-    if(user.photoURL == 0){
-      warning =
+    if(user.photoURL == 0) {
+      warning = (
         <div>
           {"SPECTATING (Not in a team)"}
         </div>
+      )
     }
-
-
-
     return (
       <div className="spectatorWarning">
         {warning}
