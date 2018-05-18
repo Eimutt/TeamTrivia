@@ -35,11 +35,11 @@ class ScoreBoard extends Component {
       default:
         var activeTeams=Object.keys(this.state.teams);
         scores = (
-          <div className>
+          <div className = "Scores">
           {Object.keys(this.state.teams).map((key) =>
-            <div>
-              <div>{key + " has score: "}</div>
-              <div>{this.state.teams[key].score}</div>
+            <div className="divRow2">
+              <div>{key + " has score"}</div>
+              <div>{": " + this.state.teams[key].score}</div>
             </div>
           )}
           </div>
@@ -48,7 +48,8 @@ class ScoreBoard extends Component {
 
 
     return (
-      <div className>
+      <div className ="ScoreBoard">
+        <div>ScoreBoard</div>
         {scores}
       </div>
     );
