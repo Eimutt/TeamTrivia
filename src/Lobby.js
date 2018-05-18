@@ -6,6 +6,7 @@ import GameState from "./GameState";
 import TeamSetup from "./TeamSetup";
 import VictoryScreen from "./VictoryScreen";
 import Beforeunload from 'react-beforeunload';
+import SpectatorWarning from "./SpectatorWarning";
 
 class Lobby extends Component {
   constructor(props) {
@@ -180,6 +181,7 @@ class Lobby extends Component {
 
   render() {
     var lobbyView;
+    var user = this.user;
     console.log(this.state.status);
     switch(this.state.status){
       case 'INITIAL':
@@ -235,6 +237,7 @@ class Lobby extends Component {
             }>
               <GameState teams={this.state.numTeams} endGame={() => this.endGame()}/>
             </Beforeunload>
+            <SpectatorWarning/>
           </div>
         )
         break;
