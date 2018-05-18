@@ -23,7 +23,8 @@ class GameState extends Component{
       round: 0,
       Cat1: {},
       Cat2: {},
-      Cat3: {}
+      Cat3: {},
+      token: ""
     }
   }
 
@@ -83,7 +84,8 @@ class GameState extends Component{
         hostId : snapshot.val().host.hostId,
         hostName: snapshot.val().host.hostName,
         gameState: 'GetQuestion',
-        numTeams: snapshot.val().numTeams
+        numTeams: snapshot.val().numTeams,
+        token: snapshot.val().token
       })
     })
 
@@ -123,7 +125,7 @@ class GameState extends Component{
   }
 
   fetchQuestion = (category, difficulty) => {
-    const url = 'https://opentdb.com/api.php?amount=1&category=' + category + '&difficulty=' + difficulty + '&type=multiple';
+    const url = 'https://opentdb.com/api.php?amount=1&category=' + category + '&difficulty=' + difficulty + '&type=multiple&token=' + this.state.token;
     return fetch(url)
       .then(this.processResponse)
       .catch(this.handleError);
@@ -204,7 +206,7 @@ class GameState extends Component{
             pickedBy: this.user.displayName
           })
           round.once("value", (snapshot) => {
-            if(snapshot.numChildren() > (3 + this.state.numTeams)){
+            if(snapshot.numChildren() > (3 + this.state.numTeams) || (ans == -1)){
               var choices = snapshot.val();
               for(var i = 1; i < 5; i++){
                 var teamN = 'Team' + i;

@@ -36,8 +36,11 @@ class Lobby extends Component {
         categories : snapshot.val().categories,
         hostId : snapshot.val().host.hostId,
         hostName: snapshot.val().host.hostName,
-        status: snapshot.val().status
+        status: snapshot.val().status,
+        finalScores: snapshot.val().finalScores
       })
+      console.log(snapshot.val().finalScores);
+      console.log(snapshot.val());
     })
     console.log(this.state.hostId);
     console.log(this);
@@ -49,31 +52,66 @@ class Lobby extends Component {
     const teams = database.ref("Lobbies/" + this.state.lobbyId + "/Teams/");
     var id = this.state.lobbyId;
     var nTeams = 0;
-    teams.once("value", (snapshot) => {
-      var data = snapshot.val();
-      console.log(data);
-      Object.keys(data).map(function(objectKey, index) {
-          //var t = data[objectKey];
-          console.log(objectKey);
-          console.log(id);
-          console.log("Lobbies/" + id + "/Teams/" + objectKey);
-          const team = database.ref("Lobbies/" + id + "/Teams/" + objectKey);
-          team.update({
-            score: 0
-          })
-          nTeams++;
-      });
+    var token;
+    this.getSessionToken().then((json) => {
+      console.log(json);
+      token = json.token;
+      console.log(token);
+      teams.once("value", (snapshot) => {
+        var data = snapshot.val();
+        console.log(data);
+        Object.keys(data).map(function(objectKey, index) {
+            //var t = data[objectKey];
+            console.log(objectKey);
+            console.log(id);
+            console.log("Lobbies/" + id + "/Teams/" + objectKey);
+            const team = database.ref("Lobbies/" + id + "/Teams/" + objectKey);
+            team.update({
+              score: 0
+            })
+            nTeams++;
+        });
+        lobby.update({
+          numTeams: nTeams
+        })
+      })
       lobby.update({
-        numTeams: nTeams
+        status: "InProgress",
+        token: token
+      })
+      this.setState({
+        numTeams : nTeams
       })
     })
-    lobby.update({
-      status: "InProgress"
-    })
-    this.setState({
-      numTeams : nTeams
-    })
   }
+
+  getSessionToken = () => {
+    const url = 'https://opentdb.com/api_token.php?command=request';
+    return fetch(url)
+      .then(this.processResponse)
+      .catch(this.handleError);
+  }
+
+  processResponse = function (response) {
+    if (response.ok) {
+      return response.json()
+    }
+    throw response;
+  }
+
+  handleError = function (error) {
+    if (error.json) {
+      error.json().then(error => {
+        console.error('getAllDishes() API Error:', error.message || error)
+      })
+    } else {
+      console.error('getAllDishes() API Error:', error.message || error)
+    }
+  }
+
+
+
+
 
   endGame = () => {
     const database = firebaseApp.database();
@@ -92,10 +130,15 @@ class Lobby extends Component {
           teamScores.push({teamNum: objectKey, teamInfo: data[objectKey]});
       });
     })
+    lobby.update({
+        status : "GameEnded",
+        finalScores : teamScores,
+    })
+    /*
     this.setState({
       status : "GameEnded",
       finalScores : teamScores,
-    })
+    })*/
   }
 
   render() {

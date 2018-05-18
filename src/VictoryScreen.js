@@ -13,13 +13,14 @@ class VictoryScreen extends Component {
       sortedTeamList: [],
 
     }
+    console.log(this);
   }
 
   compare = (a,b) => {
     if (a.teamInfo.score < b.teamInfo.score)
-      return -1;
-    if (a.teamInfo.score > b.teamInfo.score)
       return 1;
+    if (a.teamInfo.score > b.teamInfo.score)
+      return -1;
     return 0;
   }
 
