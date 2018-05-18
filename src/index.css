@@ -283,3 +283,26 @@ ul {
 	left: 20px;
 	z-index: 1;
 }
+
+#EndGameContainer {
+	height: 100%;
+	margin-top: 40px;
+	margin-left: 25%;
+	margin-right: 25%;
+}
+
+#EndGameTeam {
+	border: black solid 1px;
+	font-size: 2em;
+	background-color: silver;
+}
+
+#EndGamePlacement {
+	border: black solid 1px;
+	font-size: 2em;
+	background-color: gold;
+}
+
+#EndGameTeamContainer {
+	margin-top: 20px;
+}
