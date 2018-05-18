@@ -7,10 +7,6 @@ import {Col, Container, Row} from 'react-grid-system';
 class AnswerOptionsGrid extends Component {
   constructor(props) {
     super(props);
-    //this.props.model.addObserver(this);
-    // We create the state to store the various statuses
-    // e.g. API data loading or error
-    console.log(this.props);
     this.state = {
       answerOptions : this.props.options,
       round: this.props.round,
@@ -23,7 +19,6 @@ class AnswerOptionsGrid extends Component {
     const database = firebaseApp.database();
     const teamAns = database.ref("Lobbies/" + this.state.lobbyId + "/Rounds/Round" + this.state.round + "/Team" + user.photoURL);
     teamAns.on("value", (snapshot) => {
-      console.log(snapshot.val());
       if (snapshot.numChildren() > 0){
         var data = snapshot.val();
         this.setState({
@@ -32,7 +27,6 @@ class AnswerOptionsGrid extends Component {
         })
       }
     })
-
   }
 
   componentWillUnmount() {
@@ -43,7 +37,6 @@ class AnswerOptionsGrid extends Component {
   }
 
   render() {
-    console.log(this.state.teamChoice);
     var content = (
           <div>
             <Container className="AlternativesGrid">

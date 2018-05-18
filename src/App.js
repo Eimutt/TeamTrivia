@@ -30,16 +30,11 @@ class App extends Component {
     }, function(error) {
       // An error happened.
     });
-    console.log(user);
     this.setState({
       displayName : name,
       status : 'Name Chosen',
     })
   }
-
-
-
-
 
   componentDidMount() {
     firebaseApp.auth().signInAnonymously().catch(function(error) {
@@ -66,17 +61,10 @@ class App extends Component {
         // ...
       }
     });
-
-
-
   }
 
   render() {
-
     var namechosen;
-
-
-
     switch(this.state.status){
       case 'Pick Name':
       namechosen =
