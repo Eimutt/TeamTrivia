@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import Team from "./Team";
+import {Col, Container, Row} from 'react-grid-system';
 
 class TeamSetup extends Component {
   constructor(props) {
@@ -38,40 +39,33 @@ class TeamSetup extends Component {
   render() {
     var teams;
     console.log(this.state.numTeams);
-    switch (this.state.numTeams) {
-      case 2:
-      teams = <div className="TeamSetup">
-                <Team teamid="1" status="active"/>
-                <Team teamid="2" status="active"/>
-                <Team teamid="3" status="inactive"/>
-                <Team teamid="4" status="inactive"/>
-              </div>
-        break;
-      case 3:
-
-      teams = <div className="TeamSetup">
-                <Team teamid="1" status="active"/>
-                <Team teamid="2" status="active"/>
-                <Team teamid="3" status="active"/>
-                <Team teamid="4" status="inactive"/>
-              </div>
-
-        break;
-        case 4:
-        teams = <div className="TeamSetup">
-                  <Team teamid="1" status="active"/>
-                  <Team teamid="2" status="active"/>
-                  <Team teamid="3" status="active"/>
-                  <Team teamid="4" status="active"/>
-                </div>
-        break;
-      default:
-        teams = <b>Failed to load data, please try again</b>
-        break;
-    }
+      teams = (
+        <Container className="TeamSetup">
+          <Row>
+            <Col md={3}>
+              <Team teamid="1"/>
+            </Col>
+            <Col md={3}>
+              <Team teamid="2"/>
+            </Col>
+            <Col md={3}>
+              <Team teamid="3"/>
+            </Col>
+            <Col md={3}>
+              <Team teamid="4"/>
+            </Col>
+          </Row>
+        </Container>
+    /*    <div className="TeamSetup">
+          <Team teamid="1"/>
+          <Team teamid="2"/>
+          <Team teamid="3"/>
+          <Team teamid="4"/>
+        </div> */
+      )
 
     return (
-      <div >
+      <div>
         {teams}
       </div>
     );

@@ -37,7 +37,7 @@ class Team extends Component{
     user.updateProfile({
       photoURL: this.props.teamid
     }).then(function() {
-      
+
     }, function(error) {
       // An error happened.
     });
