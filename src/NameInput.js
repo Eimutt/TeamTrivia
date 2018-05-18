@@ -33,7 +33,7 @@ class NameInput extends React.Component {
   render() {
     return (
       <div className="App">
-        <input className="NameInput" type="text" placeholder="Enter Name..." maxlength="8" onChange={this.handleChange}></input>
+        <input className="NameInput" type="text" placeholder="Enter Name..." maxlength="8" onChange={this.handleChange} onKeyPress={event => {if (event.key === 'Enter' && this.state.name != "") {this.confirmName()}}}></input>
         <div>
           <button type="button" class="btn btn-primary btn-sm" disabled={this.state.name === ""} onClick={() => this.confirmName()}>
             Confirm

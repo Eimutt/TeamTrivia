@@ -13,7 +13,9 @@ class ChatInput extends Component {
 
 
   handleChange = (e) => {
-    this.state.text = e.target.value;
+    this.setState({
+      text: e.target.value
+    })
   }
 
   sendMessage(){
@@ -42,10 +44,10 @@ class ChatInput extends Component {
     return (
       <div className="divRow">
         <div>
-          <input className="NameInput" type="text" ref="messageInput" placeholder="Enter Message..."  onChange={this.handleChange}></input>
+          <input className="NameInput" type="text" ref="messageInput" placeholder="Enter Message..."  onChange={this.handleChange} onKeyPress={event => {if (event.key === 'Enter' && this.state.text != "") {this.sendMessage()}}}></input>
         </div>
         <div>
-          <button type="button" class="btn btn-primary btn-sm" onClick={() => this.sendMessage()}>
+          <button type="button" disabled={this.state.text === ""} class="btn btn-primary btn-sm" onClick={() => this.sendMessage()}>
             Confirm
           </button>
         </div>
