@@ -44,7 +44,7 @@ class ChatInput extends Component {
     return (
       <div className="divRow">
         <div>
-          <input className="NameInput" type="text" ref="messageInput" placeholder="Enter Message..."  onChange={this.handleChange} onKeyPress={event => {if (event.key === 'Enter' && this.state.text != "") {this.sendMessage()}}}></input>
+          <input className="NameInput" type="text" ref="messageInput" maxlength="16" placeholder="Enter Message..."  onChange={this.handleChange} onKeyPress={event => {if (event.key === 'Enter' && this.state.text != "") {this.sendMessage()}}}></input>
         </div>
         <div>
           <button type="button" disabled={this.state.text === ""} class="btn btn-primary btn-sm" onClick={() => this.sendMessage()}>
