@@ -32,7 +32,6 @@ class GameState extends Component{
   componentDidMount = () => {
     var user = firebaseApp.auth().currentUser;
     this.user = user;
-    console.log(this.user);
     var pathArray = window.location.hash.split( '/' );
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
@@ -40,7 +39,6 @@ class GameState extends Component{
     const roundinfo = database.ref("Lobbies/" + pathArray[2] + "/Rounds/")
     const roundData = database.ref("Lobbies/" + pathArray[2] + "/RoundData/")
     const catOpts = database.ref("Lobbies/" + pathArray[2] + "/CatOptions/")
-    console.log(pathArray[2]);
     roundinfo.on("value", (snapshot) => {
       if (snapshot.numChildren() > 0){
         var data = snapshot.val()["Round" + this.state.round];
@@ -102,7 +100,6 @@ class GameState extends Component{
   }
 
   getCategories = () => {
-    console.log(this.state.categories);
     const database = firebaseApp.database();
     const round = database.ref("Lobbies/" + this.state.lobbyId + "/CatOptions/");
     var randCat1 = this.getRandomCategory();
@@ -144,10 +141,12 @@ class GameState extends Component{
   handleError = function (error) {
     if (error.json) {
       error.json().then(error => {
-        console.error('getAllDishes() API Error:', error.message || error)
+        console.error('fetchQuestion() API Error:', error.message || error)
+        alert('fetchQuestion() API Error:', error.message || error)
       })
     } else {
-      console.error('getAllDishes() API Error:', error.message || error)
+      console.error('fetchQuestion() API Error:', error.message || error)
+      alert('fetchQuestion() API Error:', error.message || error)
     }
   }
 
@@ -157,7 +156,6 @@ class GameState extends Component{
       const database = firebaseApp.database();
       const lobbydata = database.ref("Lobbies/" + pathArray[2]);
       this.fetchQuestion(catID, difficulty).then((json) => {
-        console.log(json);
         var answerArray = json.results[0].incorrect_answers;
         answerArray.push(json.results[0].correct_answer);
         var randIndex = parseInt(Math.random() * 4);
@@ -250,7 +248,6 @@ class GameState extends Component{
           Round: this.state.round + 1
         }
       })
-      console.log(this.state.round + " > " + this.state.numQ);
       if (this.state.round >= this.state.numQ) {
         this.props.endGame();
       }
@@ -258,7 +255,6 @@ class GameState extends Component{
   }
 
   render() {
-    console.log(this.state.gameState);
     var dataloaded;
     switch(this.state.gameState){
       case 'Initialize':
