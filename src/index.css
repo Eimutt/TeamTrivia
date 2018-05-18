@@ -307,3 +307,38 @@ ul {
 #EndGameTeamContainer {
 	margin-top: 20px;
 }
+
+.msg-wrapper{
+  max-height: 150px;
+  overflow: auto;
+	wdith: 300px;
+}
+.msg-wrapper em{
+  font-size: 15px;
+  padding-right: 20px;
+  font-weight: bold;
+}
+.msg-wrapper div{
+  font-size: 16px
+}
+
+.spectatorWarning {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+}
+
+.chat{
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	z-index: 1;
+}
+
+.divRow{
+	text-align: center;
+}
+
+.divRow div {
+	display: inline-block;
+}

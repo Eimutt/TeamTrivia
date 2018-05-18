@@ -1,54 +1,54 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
-import Grid from 'react-css-grid';
 
-class Chat extends Component {
+class MessageBox extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      text : ""
+      messages: {},
+      status: 'Initail'
     }
-    this.handleChange = this.handleChange.bind(this);
   }
 
-
-  handleChange = (e) => {
-    this.state.text = e.target.value;
-  }
-
-  sendMessage(){
-    console.log(this.props);
-    const database = firebaseApp.database();
-    const messages = database.ref("Lobbies/" + this.props.lobbyId + "/messages");
-    messages.push({
-      displayName: this.user.displayName,
-      message: this.state.text
-    })
-    this.setState({
-        text : ""
-    })
-    this.refs.messageInput.value = '';
-  }
 
   componentDidMount() {
-    this.user = firebaseApp.auth().currentUser;
+    var lobbyId = window.location.hash.split( '/' )[2];
+    const database = firebaseApp.database();
+    const messages = database.ref("Lobbies/" + lobbyId + "/messages");
+    messages.on("value", (snapshot) => {
+      if(snapshot.exists()){
+        this.setState({
+          messages: snapshot.val(),
+          status: 'Loaded'
+        })
+      }
+    })
   }
 
   render() {
 
+    var messages;
+
+    switch (this.state.status) {
+      case 'Initial':
+
+        break;
+      case 'Loaded':
+        messages =
+          <div className="msg-wrapper">
+            {Object.keys(this.state.messages).map((key) =>
+              <div>{this.state.messages[key].displayName + "(" + this.state.messages[key].team.replace("0", "Spec") + "): " + this.state.messages[key].message}</div>
+            )}
+          </div>
+    }
 
     return (
-      <div className="App">
-        <input className="NameInput" type="text" ref="messageInput" placeholder="Enter Message..."  onChange={this.handleChange}></input>
-        <div>
-          <button type="button" class="btn btn-primary btn-sm" onClick={() => this.sendMessage()}>
-            Confirm
-          </button>
-        </div>
+      <div>
+        {messages}
       </div>
     );
   }
 }
 
-export default Chat;
+export default MessageBox;
