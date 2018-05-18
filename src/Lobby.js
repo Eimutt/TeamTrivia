@@ -5,6 +5,7 @@ import Grid from 'react-css-grid';
 import GameState from "./GameState";
 import TeamSetup from "./TeamSetup";
 import VictoryScreen from "./VictoryScreen";
+import Beforeunload from 'react-beforeunload';
 
 class Lobby extends Component {
   constructor(props) {
@@ -25,6 +26,8 @@ class Lobby extends Component {
   }
 
   componentDidMount = () => {
+    var user = firebaseApp.auth().currentUser;
+    this.user = user;
     var pathArray = window.location.hash.split( '/' );
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
@@ -141,8 +144,43 @@ class Lobby extends Component {
     })*/
   }
 
+  fug = () => {
+    console.log('xd');
+  }
+
+
+
+  removefromTeam = () => {
+    console.log("fukc");
+    var user = this.user;
+    if(this.user.photoURL != 0){
+      const database = firebaseApp.database();
+      const lobby = database.ref("Lobbies/" + this.state.lobbyId);
+      const teamdata = database.ref("Lobbies/" + this.state.lobbyId + "/Teams/Team" + user.photoURL);
+      console.log("Lobbies/" + this.state.lobbyId + "/Teams/Team" + user.photoURL + "/members")
+
+      teamdata.once("value", (snapshot) => {
+        var members = snapshot.child("members").val();
+        Object.keys(members).map(function(objectKey, index) {
+            if(members[objectKey].id == user.uid){
+              teamdata.child("members").child(objectKey).remove();
+            }
+        });
+        console.log(snapshot.child("members").numChildren());
+        if (snapshot.child("members").numChildren() == 1){
+          teamdata.remove();
+          lobby.child("numTeams").transaction(function(numTeams){
+            return numTeams-1;
+          });
+        }
+      })
+    }
+  }
+
+
   render() {
     var lobbyView;
+    console.log(this.state.status);
     switch(this.state.status){
       case 'INITIAL':
       var beginButton = (
@@ -169,24 +207,34 @@ class Lobby extends Component {
         );
       }
         lobbyView = (
-          <div className="Lobby">
-            <div className="LobbyGreet">{"Hello " + this.props.displayname}</div>
-            <div>{"Number of Questions: " + this.state.numQ}</div>
-            <div>{"Categories chosen by host " + this.state.hostName + ":"}</div>
-            <Grid id="lobbyCatGrid" width={0} gap={0}>
-              {this.state.categories.map((category) =>
-                <div>{category.categoryname}</div>
-              )}
-            </Grid>
-            <TeamSetup status={this.state}/>
-            {beginButton}
-          </div>
+          <Beforeunload onBeforeunload={() => {
+              this.removefromTeam();
+            }
+          }>
+            <div className="Lobby">
+              <div className="LobbyGreet">{"Hello " + this.props.displayname}</div>
+              <div>{"Number of Questions: " + this.state.numQ}</div>
+              <div>{"Categories chosen by host " + this.state.hostName + ":"}</div>
+              <Grid id="lobbyCatGrid" width={0} gap={0}>
+                {this.state.categories.map((category) =>
+                  <div>{category.categoryname}</div>
+                )}
+              </Grid>
+              <TeamSetup status={this.state}/>
+              {beginButton}
+            </div>
+          </Beforeunload>
         );
         break;
       case 'InProgress':
         lobbyView = (
           <div>
-            <GameState teams={this.state.numTeams} endGame={() => this.endGame()}/>
+            <Beforeunload onBeforeunload={() => {
+                this.removefromTeam();
+              }
+            }>
+              <GameState teams={this.state.numTeams} endGame={() => this.endGame()}/>
+            </Beforeunload>
           </div>
         )
         break;

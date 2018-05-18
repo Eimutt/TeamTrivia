@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import firebaseApp from "./firebase";
 import {Col, Container, Row} from 'react-grid-system';
+import Beforeunload from 'react-beforeunload';
 import ScoreBoard from './ScoreBoard';
 import Timer from './Timer';
 import AnswerOptionsGrid from './AnswerOptionsGrid';
@@ -35,6 +36,7 @@ class GameState extends Component{
     var pathArray = window.location.hash.split( '/' );
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
+    const numT = database.ref("Lobbies/" + pathArray[2] + "/numTeams");
     const roundinfo = database.ref("Lobbies/" + pathArray[2] + "/Rounds/")
     const roundData = database.ref("Lobbies/" + pathArray[2] + "/RoundData/")
     const catOpts = database.ref("Lobbies/" + pathArray[2] + "/CatOptions/")
@@ -73,9 +75,6 @@ class GameState extends Component{
         })
       }
     })
-
-
-
     lobbydata.once("value", (snapshot) => {
       this.setState({
         lobbyId : pathArray[2],
@@ -84,8 +83,12 @@ class GameState extends Component{
         hostId : snapshot.val().host.hostId,
         hostName: snapshot.val().host.hostName,
         gameState: 'GetQuestion',
-        numTeams: snapshot.val().numTeams,
         token: snapshot.val().token
+      })
+    })
+    numT.on("value", (snapshot) => {
+      this.setState({
+        numTeams : snapshot.val()
       })
     })
 
@@ -199,12 +202,14 @@ class GameState extends Component{
       const round = database.ref("Lobbies/" + this.state.lobbyId + "/Rounds/Round" + this.state.round);
       const team = round.child('Team' + this.user.photoURL);
       team.once("value", (snapshot) => {
-        if(!(snapshot.exists())){
-          team.set({
-            answered: true,
-            choice: ans,
-            pickedBy: this.user.displayName
-          })
+        if(!(snapshot.exists()) || (ans == -1)){
+          if(!snapshot.exists()){
+            team.set({
+              answered: true,
+              choice: ans,
+              pickedBy: this.user.displayName
+            })
+          }
           round.once("value", (snapshot) => {
             if(snapshot.numChildren() > (3 + this.state.numTeams) || (ans == -1)){
               var choices = snapshot.val();
@@ -249,6 +254,32 @@ class GameState extends Component{
       if (this.state.round >= this.state.numQ) {
         this.props.endGame();
       }
+    }
+  }
+
+  removefromTeam = () => {
+    var user = this.user;
+    if(this.user.photoURL != 0){
+      const database = firebaseApp.database();
+      const lobby = database.ref("Lobbies/" + this.state.lobbyId);
+      const teamdata = database.ref("Lobbies/" + this.state.lobbyId + "/Teams/Team" + user.photoURL);
+      console.log("Lobbies/" + this.state.lobbyId + "/Teams/Team" + user.photoURL + "/members")
+
+      teamdata.once("value", (snapshot) => {
+        var members = snapshot.child("members").val();
+        Object.keys(members).map(function(objectKey, index) {
+            if(members[objectKey].id == user.uid){
+              teamdata.child("members").child(objectKey).remove();
+            }
+        });
+        console.log(snapshot.child("members").numChildren());
+        if (snapshot.child("members").numChildren() == 1){
+          teamdata.remove();
+          lobby.child("numTeams").transaction(function(numTeams){
+            return numTeams-1;
+          });
+        }
+      })
     }
   }
 
@@ -309,9 +340,9 @@ class GameState extends Component{
     }
     return (
       <div>
-        {"Round " + (this.state.round + 1)}
-        {dataloaded}
-        <ScoreBoard/>
+          {"Round " + (this.state.round + 1)}
+          {dataloaded}
+          <ScoreBoard/>
       </div>
     )
   }
