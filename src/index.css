@@ -393,6 +393,19 @@ ul {
 	display: inline-block;
 }
 
+.scoreBoard {
+	border: black solid 1px;
+}
+
+.divRow2{
+	text-align: center;
+}
+
+.divRow2 div {
+	display: inline-block;
+}
+
+
 @media (max-width: 767px) {
 	#startbutton {
 		margin-top: 30px;
@@ -420,6 +433,67 @@ ul {
 	.switch {
 		display: inline-block;
 		margin-bottom: 0px;
+	}
+
+
+	.msg-wrapper{
+	  max-height: 150px;
+	  overflow: auto;
+		width: 300px;
+		color: white;
+		text-align: left;
+	}
+	.msg-wrapper em{
+	  font-size: 15px;
+	  padding-right: 20px;
+	  font-weight: bold;
+	}
+	.msg-wrapper div{
+	  font-size: 16px;
+		overflow: hidden;
+		white-space: nowrap; /* Don't forget this one */
+		text-overflow: ellipsis;
+		padding-left: 12px;
+	}
+
+	.msg-wrapper p{
+	  font-size: 16px;
+		overflow: hidden;
+		white-space: nowrap; /* Don't forget this one */
+		text-overflow: ellipsis;
+		padding-left: 12px;
+	}
+
+	.spectatorWarning {
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+	}
+
+	.chatInput {
+		margin: 0px;
+	}
+
+	.chat {
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+		z-index: 1;
+	}
+
+	.chatHeader {
+		position: relative;
+		bottom: 150px;
+		border: black solid 1px;
+	}
+
+	.divRow{
+		text-align: center;
+		width: 300px;
+	}
+
+	.divRow div {
+		display: inline-block;
 	}
 
 }
