@@ -27,7 +27,6 @@ class NameInput extends React.Component {
   }
 
   componentDidMount() {
-
   }
 
   render() {

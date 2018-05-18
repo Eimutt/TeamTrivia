@@ -6,11 +6,9 @@ import Grid from 'react-css-grid';
 class Team extends Component{
   constructor(props) {
     super(props);
-    // we put on state the properties we want to use and modify in the component
     this.state = {
       members: [],
       lobbyID: "",
-      //status: this.props.status
     }
     this.Id = this.props.teamid;
   }
@@ -24,7 +22,6 @@ class Team extends Component{
       const prevTeam = lobby.child("Teams/Team" + user.photoURL + "/members");
       prevTeam.once("value", (snapshot) => {
         if (snapshot.exists()) {
-          console.log(snapshot.val());
           Object.keys(snapshot.val()).forEach(function(key) {
               if (snapshot.val()[key].id == user.uid){
                 prevTeam.child(key).remove();
@@ -33,52 +30,39 @@ class Team extends Component{
         }
       })
     }
-
     user.updateProfile({
       photoURL: this.props.teamid
     }).then(function() {
 
     }, function(error) {
-      // An error happened.
+      console.error('joinTeam() API Error:');
+      alert('joinTeam() API Error:');
     });
-
-    //console.log(members.path);
     members.push({
       id: user.uid,
       name: user.displayName,
     });
-    //console.log(this.state.members);
   }
 
   addTeam = () => {
-    /*this.setState({
-      status: "active"
-    })*/
     const database = firebaseApp.database();
     const team = database.ref("Lobbies/" + this.state.lobbyID + "/Teams/Team" + this.Id);
-    /*team.set({
-      status: "active"
-    })*/
     team.on("value", (snapshot) => {
       if (snapshot.child("members").exists())
         this.setState({
           members : snapshot.val().members,
         })
     })
-    console.log(this.state.members);
   }
 
   componentDidMount = () => {
     var pathArray = window.location.hash.split( '/' );
     this.state.lobbyID = pathArray[2];
-    console.log("benisu");
-    console.log(this.state.lobbyID);
     const database = firebaseApp.database();
     const team = database.ref("Lobbies/" + this.state.lobbyID + "/Teams/Team" + this.Id);
     team.on("value", (snapshot) => {
       if (snapshot.child("members").exists())
         this.setState({
-          //status : "active",
           members : snapshot.val().members,
         })
       else
@@ -98,7 +82,6 @@ class Team extends Component{
         break;
       }
     }
-    console.log(this.Id);
     if (Object.keys(this.state.members).length < 7 && found === false)
       joinTeamButton = (<button type="button" class="btn btn-primary btn-sm" onClick={() => this.joinTeam()}>Join Team</button>)
     var retDiv;

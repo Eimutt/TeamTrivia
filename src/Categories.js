@@ -6,10 +6,6 @@ import GridItem from "./GridItem";
 class Categories extends React.Component {
   constructor(props) {
     super(props);
-    //this.props.model.addObserver(this);
-    // We create the state to store the various statuses
-    // e.g. API data loading or error
-    //  <GridItem categoryID={9} categoryName={"General Knowledge"} callback1={this.handleClick}/>
     this.state = {
       categories: [],
       status: "loading"
@@ -42,10 +38,12 @@ class Categories extends React.Component {
   handleError = function (error) {
     if (error.json) {
       error.json().then(error => {
-        console.error('fetchCategories() API Error:', error.message || error)
+        console.error('fetchCategories() API Error:', error.message || error);
+        alert('fetchCategories() API Error:', error.message || error);
       })
     } else {
-      console.error('fetchCategories() API Error:', error.message || error)
+      console.error('fetchCategories() API Error:', error.message || error);
+      alert('fetchCategories() API Error:', error.message || error);
     }
   }
 

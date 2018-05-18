@@ -7,7 +7,6 @@ import {Col, Container, Row} from 'react-grid-system';
 class TeamSetup extends Component {
   constructor(props) {
     super(props);
-    // we put on state the properties we want to use and modify in the component
     this.state = {
       numTeams: 2,
       categories: [],
@@ -21,12 +20,10 @@ class TeamSetup extends Component {
     this.setState({
       numTeams: this.state.numTeams + 1
     })
-    console.log(this.state.numTeams);
   };
 
   joinTeam = (e) => {
     const database = firebaseApp.database();
-    console.log("Lobbies/" + this.props.status.lobbyId);
     const team = database.ref("Lobbies/" + this.props.status.lobbyId);
     const members = team.child("Team" + e);
     var user = firebaseApp.auth().currentUser;
@@ -38,7 +35,6 @@ class TeamSetup extends Component {
 
   render() {
     var teams;
-    console.log(this.state.numTeams);
       teams = (
         <Container className="TeamSetup">
           <Row>
@@ -56,12 +52,6 @@ class TeamSetup extends Component {
             </Col>
           </Row>
         </Container>
-    /*    <div className="TeamSetup">
-          <Team teamid="1"/>
-          <Team teamid="2"/>
-          <Team teamid="3"/>
-          <Team teamid="4"/>
-        </div> */
       )
 
     return (

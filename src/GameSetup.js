@@ -8,7 +8,6 @@ import Categories from './Categories'
 class GameSetup extends React.Component {
   constructor(props) {
     super(props)
-    // we put on state the properties we want to use and modify in the component
     this.state = {
       numberOfQuestions: 10,
       currentcategories: [],
@@ -27,7 +26,6 @@ class GameSetup extends React.Component {
     const Lobbies = database.ref("Lobbies");
     var newLobID = Lobbies.push().getKey();
     this.onLobbyIDChange(newLobID);
-    //console.log(newLobID);
     var user = firebaseApp.auth().currentUser;
     Lobbies.child(newLobID).set({
       host:({
@@ -48,7 +46,6 @@ class GameSetup extends React.Component {
   }
 
   addCategory = (id, name) => {
-    //var currentcategories = this.state.categories;
     var currcats = this.state.currentcategories;
     var category = {id, name};
     var found = false;
@@ -65,30 +62,20 @@ class GameSetup extends React.Component {
     this.setState({
       currentcategories: currcats,
     })
-    //console.log("Current categories: " + JSON.stringify(this.state.currentcategories));
   }
 
   componentDidMount() {
-    /*this.fetchCategories().then((json) => {
-      console.log(json);
-      this.setState({
-        categories: json.trivia_categories,
-      })
-    });*/
   }
 
   isPositiveInteger = (n) => {
-    if (n == 0)
-      return false;
-    return n >>> 0 === parseFloat(n);
+    return n >>> 1 === parseFloat(n);
   }
 
   render() {
-    console.log("is ok" + (this.isPositiveInteger(this.state.numberOfQuestions) && this.state.currentcategories.length > 0));
     var confirmButton;
     confirmButton = (
       <div class="btnhandler">
-        <button id="startbutton" disabled={!(this.isPositiveInteger(this.state.numberOfQuestions) && this.state.currentcategories.length > 0)} type="button" class="btn btn-primary btn-lg" onClick={() => this.handleChange()}>Create Lobby</button>
+        <button id="startbutton" disabled={this.isPositiveInteger(this.state.numberOfQuestions) || this.state.currentcategories.length == 0} type="button" class="btn btn-primary btn-lg" onClick={() => this.handleChange()}>Create Lobby</button>
       </div>
     )
 
