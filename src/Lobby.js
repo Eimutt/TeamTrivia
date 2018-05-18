@@ -34,7 +34,6 @@ class Lobby extends Component {
     var pathArray = window.location.hash.split( '/' );
     const database = firebaseApp.database();
     const lobbydata = database.ref("Lobbies/" + pathArray[2]);
-    console.log(pathArray[2]);
     this.setState({
       lobbyId : pathArray[2],
     })
@@ -47,11 +46,7 @@ class Lobby extends Component {
         status: snapshot.val().status,
         finalScores: snapshot.val().finalScores
       })
-      console.log(snapshot.val().finalScores);
-      console.log(snapshot.val());
     })
-    console.log(this.state.hostId);
-    console.log(this);
   }
 
   makethegame = () => {
@@ -62,17 +57,10 @@ class Lobby extends Component {
     var nTeams = 0;
     var token;
     this.getSessionToken().then((json) => {
-      console.log(json);
       token = json.token;
-      console.log(token);
       teams.once("value", (snapshot) => {
         var data = snapshot.val();
-        console.log(data);
         Object.keys(data).map(function(objectKey, index) {
-            //var t = data[objectKey];
-            console.log(objectKey);
-            console.log(id);
-            console.log("Lobbies/" + id + "/Teams/" + objectKey);
             const team = database.ref("Lobbies/" + id + "/Teams/" + objectKey);
             team.update({
               score: 0
@@ -129,12 +117,7 @@ class Lobby extends Component {
     var teamScores = [];
     teams.once("value", (snapshot) => {
       var data = snapshot.val();
-      console.log(data);
       Object.keys(data).map(function(objectKey, index) {
-          //var t = data[objectKey];
-          console.log(objectKey);
-          console.log(id);
-          console.log("Lobbies/" + id + "/Teams/" + objectKey);
           teamScores.push({teamNum: objectKey, teamInfo: data[objectKey]});
       });
     })
@@ -148,13 +131,11 @@ class Lobby extends Component {
 
 
   removefromTeam = () => {
-    console.log("fukc");
     var user = this.user;
     if(this.user.photoURL != 0){
       const database = firebaseApp.database();
       const lobby = database.ref("Lobbies/" + this.state.lobbyId);
       const teamdata = database.ref("Lobbies/" + this.state.lobbyId + "/Teams/Team" + user.photoURL);
-      console.log("Lobbies/" + this.state.lobbyId + "/Teams/Team" + user.photoURL + "/members")
 
       teamdata.once("value", (snapshot) => {
         var members = snapshot.child("members").val();
@@ -163,7 +144,6 @@ class Lobby extends Component {
               teamdata.child("members").child(objectKey).remove();
             }
         });
-        console.log(snapshot.child("members").numChildren());
         if (snapshot.child("members").numChildren() == 1){
           teamdata.remove();
           lobby.child("numTeams").transaction(function(numTeams){
@@ -184,14 +164,12 @@ class Lobby extends Component {
         showchat: false
       })
     }
-    console.log("#Xdeadxaedad");
   }
 
 
   render() {
     var lobbyView;
     var user = this.user;
-    console.log(this.state.status);
     switch(this.state.status){
       case 'INITIAL':
       var beginButton = (
@@ -200,8 +178,6 @@ class Lobby extends Component {
         </div>
       );
       var user = firebaseApp.auth().currentUser;
-      console.log(user.uid);
-      console.log(this.state.hostId);
       const database = firebaseApp.database();
       const lobby = database.ref("Lobbies/" + this.state.lobbyId);
       var teamexists = false;
@@ -209,7 +185,6 @@ class Lobby extends Component {
         if(snapshot.child("Teams").exists())
           teamexists = true;
       })
-      console.log(teamexists);
       if(this.state.hostId == user.uid && teamexists){
         beginButton = (
           <div class="btnhandler">
@@ -263,7 +238,7 @@ class Lobby extends Component {
         {lobbyView}
         <div className="chatToggle">
           <div class="btnhandler">
-            <button id="chatToggle" type="button" class="btn btn-primary btn-sm" onClick={() => this.togglechat()}>C</button>
+            <button id="chatToggle" type="button" class="btn btn-primary btn-sm" onClick={() => this.togglechat()}>Chat</button>
           </div>
         </div>
         {this.state.showchat ?
