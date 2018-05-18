@@ -24,7 +24,7 @@ class Lobby extends Component {
       hostName: "",
       numTeams: 0,
       finalScores: [],
-      showchat: false
+      showchat: true
     }
   }
 
@@ -263,7 +263,7 @@ class Lobby extends Component {
         {lobbyView}
         <div className="chatToggle">
           <div class="btnhandler">
-            <button id="chatToggle" type="button" class="btn btn-primary btn-lg" onClick={() => this.togglechat()}>togglechat</button>
+            <button id="chatToggle" type="button" class="btn btn-primary btn-sm" onClick={() => this.togglechat()}>C</button>
           </div>
         </div>
         {this.state.showchat ?
