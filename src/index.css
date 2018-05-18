@@ -330,7 +330,7 @@ ul {
 
 .chat{
 	position: absolute;
-	bot: 0px;
+	bottom: 0px;
 	left: 0px;
 	z-index: 1;
 }
