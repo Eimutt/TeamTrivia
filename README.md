@@ -16,22 +16,40 @@ We have deployed a working team-based multi-player trivia game.
 * A lobby-wide chat where you can smack-talk your competition
 
 ## Project file structure
-AnswerOptions.js: Responsible for the logic and rendering of the answer options for questions. Used by GameState.js.
+AnswerOptions.js: Used by GameState.js. Responsible for the logic and rendering of the answer options for questions.
 
-App.js: Handles Routers. Responsible for creating an anonymous login and a name of the user.
+App.js: Responsible for creating an anonymous login and a name of the user, as well as initializing GameSetup.js and Lobby.js.
 
-GameSetup.js: Handles the structure and data of the game setup screen. Also responsible for printing the game setup screen.
+Categories.js: Used by GameSetup.js. Responsible for fetching the categories dynamically from the API as well as the logic and rendering of the categories table.
 
-GameState.js: Handles the currently local game logic. Will handle much more in the future.
+Chat.js: Used by Lobby.js. Responsible for structuring the chat.
 
-GridItem.js: Currently not used; beginning of effort for splitting up classes into their own js-files for structure.
+ChatInput.js: Used by Chat.js: Responsible for the logic and rendering of the input box in the chat section. Pushes messages to the firebase DB.
 
-Lobby.js: Handles the structure, state and data of the lobby. Also responsible for printing the lobby.
+firebase.js: Used by all components connecting to the firebase DB. Responsible for establishing a connection to the firebase DB.
 
-Team.js: Handles the structure and data of teams. Also responsible for printing the teams.
+GameSetup.js: Used by App.js. Responsible for the logic and rendering of setting up a game, i.e. selecting number of questions and categories.
 
-firebase.js Handles the connection to the firebase database.
+GameState.js: Used by Lobby.js. Responsible for most of the game logic and the rendering of the game, for example the questions, the answers, the results etc.
 
-index.css: Keeps all css-styling for the entire project.
+GridItem.js: Used by Categories.js. Responsible for the logic and rendering of the categories in the categories table.
+
+index.css: Responsible for ALL css in the entire project. (This is far from ideal but we never got around to splitting it up into separate files).
 
 index.js: Starts the app. Sets up the outer router.
+
+Lobby.js: Used by App.js. Responsible for TeamSetup.js, GameState.js, VictoryScreen.js, SpectatorWarning.js etc. Practically contains everything related to the game once the host has created a lobby.
+
+MessageBox.js: Used by Chat.js. Responsible for the logic and rendering of the messages posted in the chat.
+
+NameInput.js: Used by App.js. Responsible for the logic and rendering of the name-input screen you meet whenever you start up TeamTrivia.
+
+RoundResults.js: Used by GameState.js. Responsible for the logic and rendering of the results of the previous question.
+
+ScoreBoard.js: Used by GameState.js. Responsible for the logic and rendering of the current points held by the teams.
+
+SpectatorWarning.js: Used by Lobby.js. Responsible for the logic and rendering of a warning message to spectators telling them that they are spectators.
+
+Team.js: Handles the structure and data of teams.
+
+TeamSetup.js: Used by Lobby.js. Responsible for the logic of joining and changing teams and rendering of the table of the 4 teams.

@@ -22,17 +22,6 @@ class TeamSetup extends Component {
     })
   };
 
-  joinTeam = (e) => {
-    const database = firebaseApp.database();
-    const team = database.ref("Lobbies/" + this.props.status.lobbyId);
-    const members = team.child("Team" + e);
-    var user = firebaseApp.auth().currentUser;
-    members.push({
-      id: user.uid,
-      name: user.displayName,
-    });
-  }
-
   render() {
     var teams;
       teams = (
